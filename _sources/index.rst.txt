@@ -1,7 +1,6 @@
 
-Numerical solutions of differential equations
-=============================================
-
+Welcome to Diff. Academy's documentation!
+=========================================
 
 .. toctree::
    :maxdepth: 3
