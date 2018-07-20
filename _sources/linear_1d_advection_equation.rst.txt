@@ -84,7 +84,7 @@ matrix  :math:`\mathbf{A}` for equation :eq:`adv_1d_upwind` is:
 .. math::
    :label: matrixA
    
-    \mathbf{A}=\begin{bmatrix}
+    \small\mathbf{A}=\small\begin{bmatrix}
     (1+\alpha_{min}-\alpha_{max}) & -\alpha_{min} & 0 & 0 & 0& ... & \alpha_{max} \\
     \alpha_{max} & (1+\alpha_{min}-\alpha_{max}) & -\alpha_{min}& 0 & 0 &... & 0 \\
     0 & \alpha_{max} & (1+\alpha_{min}-\alpha_{max}) & -\alpha_{min}& 0 &... & 0 \\
