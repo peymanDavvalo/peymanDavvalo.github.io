@@ -633,7 +633,6 @@ div.body div.math p {
 }
 
 span.eqno {
-	    margin-left: 5px;
     float: right;
 }
 
@@ -642,21 +641,6 @@ span.eqno a.headerlink {
     left: 0px;
     z-index: 1;
 }
-
-.eqno {
-    margin-left: 5px;
-    float: right;
-}
-.math .headerlink {
-    display: none;
-    visibility: hidden;
-}
-.math:hover .headerlink {
-    display: inline-block;
-    visibility: visible;
-    margin-right: -0.7em;
-}
-
 
 div.math:hover a.headerlink {
     visibility: visible;
