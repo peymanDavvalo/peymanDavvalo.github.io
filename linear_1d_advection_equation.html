@@ -84,10 +84,13 @@
 <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#numerical-techniques">Numerical Techniques</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#forward-time-central-space-ftcs-method">Forward-Time Central-Space (FTCS) Method</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#stability">Stability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stability-and-accuracy">Stability And Accuracy</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#upwind-methods">Upwind Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#upwind-methods">Upwind Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Stability And Accuracy</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -190,16 +193,43 @@ descritized uniformly as:</p>
 <p>If we rearrange equation <a class="reference internal" href="#equation-adv-1d-dis1">(4)</a> we finally have:</p>
 <div class="math notranslate nohighlight" id="equation-adv-1d-dis">
 <span class="eqno">(5)<a class="headerlink" href="#equation-adv-1d-dis" title="Permalink to this equation">¶</a></span>\[u_{i}^{n+1}=u_{i}^{n}+ \frac{ \Delta t}{2 \Delta x} \Big(u_{i-1}^{n}-u_{i+1}^{n}\Big)\]</div>
-<div class="section" id="stability">
-<h4>Stability<a class="headerlink" href="#stability" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="stability-and-accuracy">
+<h4>Stability And Accuracy<a class="headerlink" href="#stability-and-accuracy" title="Permalink to this headline">¶</a></h4>
 <p>Practically this method is not usefull since using von Neumann Stability Analysis, FTCS method is unconditionally unstable.</p>
 </div>
 </div>
 <div class="section" id="upwind-methods">
 <h3>Upwind Methods<a class="headerlink" href="#upwind-methods" title="Permalink to this headline">¶</a></h3>
-<p>Upwind methods refers to those methods that the spatial differences are skewed in the flow direction.</p>
-<p>Thus the choice between the two methods  and  should be dictated by the
-sign of <span class="math notranslate nohighlight">\(c\)</span>.</p>
+<p>Upwind methods refers to those methods that the spatial differences are skewed in the flow direction. The simplest upwind method is the discribed by
+backward (<span class="math notranslate nohighlight">\(c &gt; 0\)</span>) or forward (<span class="math notranslate nohighlight">\(c &lt; 0\)</span>) spatial difference and the temporal forward Euler methods. As it is mentioned, the choice between the two spatial methods are dictated by the
+sign of <span class="math notranslate nohighlight">\(c\)</span>, meaning the flow direction. Using the descritization methods described above we get:</p>
+<div class="math notranslate nohighlight" id="equation-adv-1d-upwind1">
+<span class="eqno">(6)<a class="headerlink" href="#equation-adv-1d-upwind1" title="Permalink to this equation">¶</a></span>\[\frac{u_{i}^{n+1}-u_{i}^{n}}{\Delta t} + \gamma_{min} \Big(\frac{u_{i+1}^{n}-u_{i}^{n}}{ \Delta x} \Big)+ \gamma_{max} \Big(\frac{u_{i}^{n}-u_{i-1}^{n}}{ \Delta x} \Big) = 0\]</div>
+<p>where <span class="math notranslate nohighlight">\(\gamma_{min}:=min(a,0)\)</span> and <span class="math notranslate nohighlight">\(\gamma_{max}:=max(a,0)\)</span>. Rearranging equation <a class="reference internal" href="#equation-adv-1d-upwind1">(6)</a> we have:</p>
+<div class="math notranslate nohighlight" id="equation-adv-1d-upwind">
+<span class="eqno">(7)<a class="headerlink" href="#equation-adv-1d-upwind" title="Permalink to this equation">¶</a></span>\[u_{i}^{n+1}= \alpha_{max} u_{i-1}^{n}+(1+\alpha_{min}-\alpha_{max})u_{i}^{n} -\alpha_{min}u_{i+1}^{n}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha_{min}:=\frac{\gamma_{min} \Delta t}{\Delta x}\)</span> and <span class="math notranslate nohighlight">\(\alpha_{max}:=\frac{\gamma_{max} \Delta t}{\Delta x}\)</span>. Considering the solution is periodic, we can rewrite equation  <a class="reference internal" href="#equation-adv-1d-upwind">(7)</a>
+in its matrix form:</p>
+<div class="math notranslate nohighlight" id="equation-mat-eq">
+<span class="eqno">(8)<a class="headerlink" href="#equation-mat-eq" title="Permalink to this equation">¶</a></span>\[\mathbf{U}^{n+1}= \mathbf{A}^{n+1}\mathbf{U}^{n}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{U}^{n+1}=[u_{0}^{n+1},u_{1}^{n+1},...,u_{N-1}^{n+1},u_{N}^{n+1}]^{T}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{U}^{n}=[u_{0}^{n},u_{1}^{n},...,u_{N-1}^{n},u_{N}^{n}]^{T}\)</span> and
+matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equation <a class="reference internal" href="#equation-adv-1d-upwind">(7)</a> is:</p>
+<div class="math notranslate nohighlight" id="equation-matrixa">
+<span class="eqno">(9)<a class="headerlink" href="#equation-matrixa" title="Permalink to this equation">¶</a></span>\[\begin{split} \mathbf{A}=\begin{bmatrix}
+ (1+\alpha_{min}-\alpha_{max}) &amp; -\alpha_{min} &amp; 0 &amp; 0 &amp; 0&amp; ... &amp; \alpha_{max} \\
+ \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max}) &amp; -\alpha_{min}&amp; 0 &amp; 0 &amp;... &amp; 0 \\
+ 0 &amp; \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max}) &amp; -\alpha_{min}&amp; 0 &amp;... &amp; 0 \\
+  \vdots &amp; \vdots &amp; \ddots &amp; \ddots &amp;  \ddots &amp; \vdots &amp; \vdots \\
+ 0 &amp;0 &amp;... &amp; \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max}) &amp;  -\alpha_{min} &amp; 0 \\
+ 0 &amp;0 &amp;... &amp; 0 &amp; \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max}) &amp;  -\alpha_{min}  \\
+ -\alpha_{min} &amp;0 &amp;... &amp; 0 &amp; 0&amp; 0 \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max})  \\
+ \end{bmatrix}_{(N+1)\times(N+1)}\end{split}\]</div>
+<div class="section" id="id1">
+<h4>Stability And Accuracy<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p>The above upwind method is first order accurate in both space. Using von Neumann Stability Analysis, this method is conditionally stable. The condition is:</p>
+<div class="math notranslate nohighlight" id="equation-cfl-cond">
+<span class="eqno">(10)<a class="headerlink" href="#equation-cfl-cond" title="Permalink to this equation">¶</a></span>\[CFL= |\frac{c \Delta t}{\Delta x}| \le 1\]</div>
+</div>
 </div>
 </div>
 </div>
