@@ -1,0 +1,109 @@
+
+Linear 1D Advection Equation
+****************************
+
+Introduction
+==================== 
+
+1D linear advection equation (so called wave equation) is one of the 
+simplest equations in mathematics. The equation is described as:
+
+.. math:: \frac{\partial u}{\partial t} + c \frac{\partial u}{\partial x} = 0
+   :label: adv_1d
+
+where :math:`u(x,t), x \in \mathbb{R}` is a scalar (wave), advected by a nonezero constant :math:`c` during time :math:`t`. The sign of :math:`c`
+characterise the direction of wave propagation. If :math:`c>0`, the wave propagates in the positive direction of :math:`x`-axis. On the other hand if :math:`c<0` then 
+the wave propagates to the negative direction of `x`-axis. The mangitude of :math:`c` tells us how fast the wave propagates.
+The exact solution of this equation is given by its initial value. Assuming that the initial value for equation
+:eq:`adv_1d` is given as :math:`u_0(x) = u(x,0)`, the exact solution of equation :eq:`adv_1d` is:
+
+.. math:: u(x,t) = u_{0}(x-ct)
+   :label: ex_adv_1d
+
+
+Numerical Techniques
+====================   
+   
+Although this equation is simple to solve, it can be very useful for learning numerical techniques. We start by introducing the 
+numerical methods.    
+
+Forward-Time Central-Space (FTCS) Method
+----------------------------------------
+
+FTCS is based on central spatial difference scheme and the temporal forward Euler method.  Assume that :math:`t` and :math:`x` are 
+descritized uniformly as:
+
+.. math::
+   :label: ti
+ 
+   t_{n}= t_{0}+ \Delta t   \qquad n=0,...,T 
+   
+   x_{i}= x_{0}+ \Delta x   \qquad i=0,...,N 
+   
+Let us assume that :math:`u_{i}^{n}:=u(x_i,t_n)`. Then using applying central spatial difference and the temporal forward Euler methods to equation :eq:`adv_1d`, we have:
+
+.. math:: \frac{u_{i}^{n+1}-u_{i}^{n}}{\Delta t} + \frac{u_{i-1}^{n}-u_{i+1}^{n}}{2 \Delta x}  = 0
+   :label: adv_1d_dis1
+
+If we rearrange equation :eq:`adv_1d_dis1` we finally have:
+
+.. math:: u_{i}^{n+1}=u_{i}^{n}+ \frac{ \Delta t}{2 \Delta x} \Big(u_{i-1}^{n}-u_{i+1}^{n}\Big)   
+   :label: adv_1d_dis
+
+Stability And Accuracy
+^^^^^^^^^^^^^^^^^^^^^^   
+ 
+
+Practically this method is not usefull since using von Neumann Stability Analysis, FTCS method is unconditionally unstable.
+
+
+Upwind Methods
+--------------
+
+Upwind methods refers to those methods that the spatial differences are skewed in the flow direction. The simplest upwind method is the discribed by
+backward (:math:`c > 0`) or forward (:math:`c < 0`) spatial difference and the temporal forward Euler methods. As it is mentioned, the choice between the two spatial methods are dictated by the
+sign of :math:`c`, meaning the flow direction. Using the descritization methods described above we get:
+ 
+.. math:: \frac{u_{i}^{n+1}-u_{i}^{n}}{\Delta t} + \gamma_{min} \Big(\frac{u_{i+1}^{n}-u_{i}^{n}}{ \Delta x} \Big)+ \gamma_{max} \Big(\frac{u_{i}^{n}-u_{i-1}^{n}}{ \Delta x} \Big) = 0
+   :label: adv_1d_upwind1
+
+where :math:`\gamma_{min}:=min(a,0)` and :math:`\gamma_{max}:=max(a,0)`. Rearranging equation :eq:`adv_1d_upwind1` we have:
+
+.. math:: u_{i}^{n+1}= \alpha_{max} u_{i-1}^{n}+(1+\alpha_{min}-\alpha_{max})u_{i}^{n} -\alpha_{min}u_{i+1}^{n}
+   :label: adv_1d_upwind
+   
+where :math:`\alpha_{min}:=\frac{\gamma_{min} \Delta t}{\Delta x}` and :math:`\alpha_{max}:=\frac{\gamma_{max} \Delta t}{\Delta x}`. Considering the solution is periodic, we can rewrite equation  :eq:`adv_1d_upwind` 
+in its matrix form:
+
+.. math:: \mathbf{U}^{n+1}= \mathbf{A}^{n+1}\mathbf{U}^{n}
+   :label: mat_eq
+
+where :math:`\mathbf{U}^{n+1}=[u_{0}^{n+1},u_{1}^{n+1},...,u_{N-1}^{n+1},u_{N}^{n+1}]^{T}` and :math:`\mathbf{U}^{n}=[u_{0}^{n},u_{1}^{n},...,u_{N-1}^{n},u_{N}^{n}]^{T}` and
+matrix  :math:`\mathbf{A}` for equation :eq:`adv_1d_upwind` is:
+
+.. math::
+   :label: matrixA
+   
+    \mathbf{A}=\begin{bmatrix}
+    (1+\alpha_{min}-\alpha_{max}) & -\alpha_{min} & 0 & 0 & 0& ... & \alpha_{max} \\
+    \alpha_{max} & (1+\alpha_{min}-\alpha_{max}) & -\alpha_{min}& 0 & 0 &... & 0 \\
+    0 & \alpha_{max} & (1+\alpha_{min}-\alpha_{max}) & -\alpha_{min}& 0 &... & 0 \\
+     \vdots & \vdots & \ddots & \ddots &  \ddots & \vdots & \vdots \\
+    0 &0 &... & \alpha_{max} & (1+\alpha_{min}-\alpha_{max}) &  -\alpha_{min} & 0 \\
+    0 &0 &... & 0 & \alpha_{max} & (1+\alpha_{min}-\alpha_{max}) &  -\alpha_{min}  \\
+    -\alpha_{min} &0 &... & 0 & 0& 0 \alpha_{max} & (1+\alpha_{min}-\alpha_{max})  \\
+    \end{bmatrix}_{(N+1)\times(N+1)}
+
+Stability And Accuracy
+^^^^^^^^^^^^^^^^^^^^^^   
+
+The above upwind method is first order accurate in both space. Using von Neumann Stability Analysis, this method is conditionally stable. The condition is:
+
+
+.. math:: CFL= |\frac{c \Delta t}{\Delta x}| \le 1
+   :label: cfl_cond
+
+
+Python Code
+^^^^^^^^^^^  
+
