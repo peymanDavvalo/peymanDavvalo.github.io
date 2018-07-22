@@ -1,41 +1,24 @@
 licence
 ==================================
 
+MIT License
 
-Here is some math :math:`a^2 + b^2 = c^2`.
+Copyright (c) 2018 peymanDavvalo.github.io
 
-.. math::
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-   (a + b)^2 = a^2 + 2ab + b^2
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-   (a - b)^2 = a^2 - 2ab + b^2
-
-   
-Here some another math   
-   
-.. math:: e^{i\pi} + 1 = 0
-   :label: euler
-
-Euler's identity, equation :eq:`euler`, was elected one of the most
-beautiful mathematical formulas.   
-
-Text before.
-
-.. math::
-   :label: eq1
-
-   \smash{\begin{cases}
-   a_{11}x_{1} + \dots + a_{1m}x_{m} &= b_1\\
-   a_{21}x_{1} + \dots + a_{2m}x_{m} &= b_2
-   \end{cases}}
-
-Text after.
- 
-Here is our text.::
-
-    println('hello')
-	>> hello
-	
-contact
-=======
-questions?
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
