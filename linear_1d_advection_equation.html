@@ -1,0 +1,573 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Linear 1D Advection Equation &mdash; Diff. Academy 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="licence" href="licence.html" />
+    <link rel="prev" title="Welcome to Diff. Academy’s documentation!" href="index.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Diff. Academy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Linear 1D Advection Equation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#numerical-techniques">Numerical Techniques</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#forward-time-central-space-ftcs-method">Forward-Time Central-Space (FTCS) Method</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#stability-and-accuracy">Stability And Accuracy</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#upwind-methods">Upwind Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Stability And Accuracy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#python-code">Python Code</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#matlab-code">Matlab Code</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#julia-code">Julia Code</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#higher-order-upwind-methods">Higher Order Upwind Methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="licence.html">licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licence.html#contact">contact</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Diff. Academy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Linear 1D Advection Equation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/linear_1d_advection_equation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="linear-1d-advection-equation">
+<h1>Linear 1D Advection Equation<a class="headerlink" href="#linear-1d-advection-equation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>1D linear advection equation (so called wave equation) is one of the
+simplest equations in mathematics. The equation is described as:</p>
+<div class="math notranslate nohighlight" id="equation-adv-1d">
+<span class="eqno">(1)<a class="headerlink" href="#equation-adv-1d" title="Permalink to this equation">¶</a></span>\[\frac{\partial u}{\partial t} + c \frac{\partial u}{\partial x} = 0\]</div>
+<p>where <span class="math notranslate nohighlight">\(u(x,t), x \in \mathbb{R}\)</span> is a scalar (wave), advected by a nonezero constant <span class="math notranslate nohighlight">\(c\)</span> during time <span class="math notranslate nohighlight">\(t\)</span>. The sign of <span class="math notranslate nohighlight">\(c\)</span>
+characterise the direction of wave propagation. If <span class="math notranslate nohighlight">\(c&gt;0\)</span>, the wave propagates in the positive direction of <span class="math notranslate nohighlight">\(x\)</span>-axis. On the other hand if <span class="math notranslate nohighlight">\(c&lt;0\)</span> then
+the wave propagates to the negative direction of <cite>x</cite>-axis. The mangitude of <span class="math notranslate nohighlight">\(c\)</span> tells us how fast the wave propagates.
+The exact solution of this equation is given by its initial value. Assuming that the initial value for equation
+<a class="reference internal" href="#equation-adv-1d">(1)</a> is given as <span class="math notranslate nohighlight">\(u_0(x) = u(x,0)\)</span>, the exact solution of equation <a class="reference internal" href="#equation-adv-1d">(1)</a> is:</p>
+<div class="math notranslate nohighlight" id="equation-ex-adv-1d">
+<span class="eqno">(2)<a class="headerlink" href="#equation-ex-adv-1d" title="Permalink to this equation">¶</a></span>\[u(x,t) = u_{0}(x-ct)\]</div>
+</div>
+<div class="section" id="numerical-techniques">
+<h2>Numerical Techniques<a class="headerlink" href="#numerical-techniques" title="Permalink to this headline">¶</a></h2>
+<p>Although this equation is simple to solve, it can be very useful for learning numerical techniques. We start by introducing the
+numerical methods.</p>
+<div class="section" id="forward-time-central-space-ftcs-method">
+<h3>Forward-Time Central-Space (FTCS) Method<a class="headerlink" href="#forward-time-central-space-ftcs-method" title="Permalink to this headline">¶</a></h3>
+<p>FTCS is based on central spatial difference scheme and the temporal forward Euler method.  Assume that <span class="math notranslate nohighlight">\(t\)</span> and <span class="math notranslate nohighlight">\(x\)</span> are
+descritized uniformly as:</p>
+<div class="math notranslate nohighlight" id="equation-ti">
+<span class="eqno">(3)<a class="headerlink" href="#equation-ti" title="Permalink to this equation">¶</a></span>\[ \begin{align}\begin{aligned}t_{n}= t_{0}+ \Delta t   \qquad n=0,...,T\\x_{i}= x_{0}+ \Delta x   \qquad i=0,...,N\end{aligned}\end{align} \]</div>
+<p>Let us assume that <span class="math notranslate nohighlight">\(u_{i}^{n}:=u(x_i,t_n)\)</span>. Then using applying central spatial difference and the temporal forward Euler methods to equation <a class="reference internal" href="#equation-adv-1d">(1)</a>, we have:</p>
+<div class="math notranslate nohighlight" id="equation-adv-1d-dis1">
+<span class="eqno">(4)<a class="headerlink" href="#equation-adv-1d-dis1" title="Permalink to this equation">¶</a></span>\[\frac{u_{i}^{n+1}-u_{i}^{n}}{\Delta t} + \frac{u_{i-1}^{n}-u_{i+1}^{n}}{2 \Delta x}  = 0\]</div>
+<p>If we rearrange equation <a class="reference internal" href="#equation-adv-1d-dis1">(4)</a> we finally have:</p>
+<div class="math notranslate nohighlight" id="equation-adv-1d-dis">
+<span class="eqno">(5)<a class="headerlink" href="#equation-adv-1d-dis" title="Permalink to this equation">¶</a></span>\[u_{i}^{n+1}=u_{i}^{n}+ \frac{ \Delta t}{2 \Delta x} \Big(u_{i-1}^{n}-u_{i+1}^{n}\Big)\]</div>
+<div class="section" id="stability-and-accuracy">
+<h4>Stability And Accuracy<a class="headerlink" href="#stability-and-accuracy" title="Permalink to this headline">¶</a></h4>
+<p>Practically this method is not usefull since using von Neumann Stability Analysis, FTCS method is unconditionally unstable.</p>
+</div>
+</div>
+<div class="section" id="upwind-methods">
+<h3>Upwind Methods<a class="headerlink" href="#upwind-methods" title="Permalink to this headline">¶</a></h3>
+<p>Upwind methods refers to those methods that the spatial differences are skewed in the flow direction. The simplest upwind method is the discribed by
+backward (<span class="math notranslate nohighlight">\(c &gt; 0\)</span>) or forward (<span class="math notranslate nohighlight">\(c &lt; 0\)</span>) spatial difference and the temporal forward Euler methods. As it is mentioned, the choice between the two spatial methods are dictated by the
+sign of <span class="math notranslate nohighlight">\(c\)</span>, meaning the flow direction. Using the descritization methods described above we get:</p>
+<div class="math notranslate nohighlight" id="equation-adv-1d-upwind1">
+<span class="eqno">(6)<a class="headerlink" href="#equation-adv-1d-upwind1" title="Permalink to this equation">¶</a></span>\[\frac{u_{i}^{n+1}-u_{i}^{n}}{\Delta t} + \gamma_{min} \Big(\frac{u_{i+1}^{n}-u_{i}^{n}}{ \Delta x} \Big)+ \gamma_{max} \Big(\frac{u_{i}^{n}-u_{i-1}^{n}}{ \Delta x} \Big) = 0\]</div>
+<p>where <span class="math notranslate nohighlight">\(\gamma_{min}:=min(a,0)\)</span> and <span class="math notranslate nohighlight">\(\gamma_{max}:=max(a,0)\)</span>. Rearranging equation <a class="reference internal" href="#equation-adv-1d-upwind1">(6)</a> we have:</p>
+<div class="math notranslate nohighlight" id="equation-adv-1d-upwind">
+<span class="eqno">(7)<a class="headerlink" href="#equation-adv-1d-upwind" title="Permalink to this equation">¶</a></span>\[u_{i}^{n+1}= \alpha_{max} u_{i-1}^{n}+(1+\alpha_{min}-\alpha_{max})u_{i}^{n} -\alpha_{min}u_{i+1}^{n}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha_{min}:=\frac{\gamma_{min} \Delta t}{\Delta x}\)</span> and <span class="math notranslate nohighlight">\(\alpha_{max}:=\frac{\gamma_{max} \Delta t}{\Delta x}\)</span>. Considering the solution is periodic, we can rewrite equation  <a class="reference internal" href="#equation-adv-1d-upwind">(7)</a>
+in its matrix form:</p>
+<div class="math notranslate nohighlight" id="equation-mat-eq">
+<span class="eqno">(8)<a class="headerlink" href="#equation-mat-eq" title="Permalink to this equation">¶</a></span>\[\mathbf{U}^{n+1}= \mathbf{A}^{n+1}\mathbf{U}^{n}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{U}^{n+1}=[u_{0}^{n+1},u_{1}^{n+1},...,u_{N-1}^{n+1},u_{N}^{n+1}]^{T}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{U}^{n}=[u_{0}^{n},u_{1}^{n},...,u_{N-1}^{n},u_{N}^{n}]^{T}\)</span> and
+matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equation <a class="reference internal" href="#equation-adv-1d-upwind">(7)</a> is:</p>
+<div class="math notranslate nohighlight" id="equation-matrixa">
+<span class="eqno">(9)<a class="headerlink" href="#equation-matrixa" title="Permalink to this equation">¶</a></span>\[\begin{split} \small\mathbf{A}=\small\begin{bmatrix}
+ (1+\alpha_{min}-\alpha_{max}) &amp; -\alpha_{min} &amp; 0 &amp; 0 &amp; 0&amp; ... &amp; \alpha_{max} \\
+ \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max}) &amp; -\alpha_{min}&amp; 0 &amp; 0 &amp;... &amp; 0 \\
+ 0 &amp; \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max}) &amp; -\alpha_{min}&amp; 0 &amp;... &amp; 0 \\
+  \vdots &amp; \vdots &amp; \ddots &amp; \ddots &amp;  \ddots &amp; \vdots &amp; \vdots \\
+ 0 &amp;0 &amp;... &amp; \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max}) &amp;  -\alpha_{min} &amp; 0 \\
+ 0 &amp;0 &amp;... &amp; 0 &amp; \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max}) &amp;  -\alpha_{min}  \\
+ -\alpha_{min} &amp;0 &amp;... &amp; 0 &amp; 0&amp; 0 \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max})  \\
+ \end{bmatrix}_{(N+1)\times(N+1)}\end{split}\]</div>
+<div class="section" id="id1">
+<h4>Stability And Accuracy<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p>The above upwind method is first order accurate in both space. Using von Neumann Stability Analysis, this method is conditionally stable. The condition is:</p>
+<div class="math notranslate nohighlight" id="equation-cfl-cond">
+<span class="eqno">(10)<a class="headerlink" href="#equation-cfl-cond" title="Permalink to this equation">¶</a></span>\[CFL= |\frac{c \Delta t}{\Delta x}| \le 1\]</div>
+</div>
+<div class="section" id="python-code">
+<h4>Python Code<a class="headerlink" href="#python-code" title="Permalink to this headline">¶</a></h4>
+<p>Here is a python code for modeling the 1D linear advection equation using upwind method described above.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="c1">#LA1D.py</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>    
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="k">class</span> <span class="nc">LinearAdvection1D</span><span class="p">:</span>
+	<span class="c1"># Matrix for LA1D </span>
+   <span class="n">A</span><span class="o">=</span><span class="mi">0</span>
+   <span class="c1"># Initialization of constants </span>
+   <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">xN</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">deltaT</span><span class="p">,</span><span class="n">T</span><span class="p">):</span>
+	  <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">c</span> 
+	  <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span>   
+	  <span class="bp">self</span><span class="o">.</span><span class="n">xN</span> <span class="o">=</span> <span class="n">xN</span> 
+	  <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="n">N</span>   
+	  <span class="bp">self</span><span class="o">.</span><span class="n">deltaT</span> <span class="o">=</span> <span class="n">deltaT</span>   
+	  <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">T</span>       
+   <span class="c1"># CFL number funct.   </span>
+   <span class="k">def</span> <span class="nf">CFL</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+	   <span class="n">deltaX</span><span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xN</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">x0</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span>
+	   <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">deltaT</span><span class="o">/</span><span class="n">deltaX</span><span class="p">)</span>
+   <span class="c1"># check CFL number &lt;=1 or not.</span>
+   <span class="k">def</span> <span class="nf">checkCFL</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+	   <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CFL</span><span class="p">()</span><span class="o">&lt;=</span><span class="mi">1</span><span class="p">):</span>
+		   <span class="n">flag</span><span class="o">=</span><span class="bp">True</span> 
+	   <span class="k">else</span><span class="p">:</span>
+		   <span class="n">flag</span><span class="o">=</span><span class="bp">False</span>
+	   <span class="k">return</span> <span class="n">flag</span>
+   <span class="c1"># Matrix assembly of LA1D   </span>
+   <span class="k">def</span> <span class="nf">upwindMatrixAssembly</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+	   <span class="n">alpha_min</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+	   <span class="n">alpha_max</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+	   <span class="n">a1</span><span class="o">=</span><span class="p">[</span><span class="n">alpha_max</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+	   <span class="n">a2</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="o">+</span><span class="n">alpha_min</span><span class="o">-</span><span class="n">alpha_max</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+	   <span class="n">a3</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="n">alpha_min</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+	   <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">a3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	   <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">alpha_max</span>
+	   <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">=-</span><span class="n">alpha_min</span>
+   <span class="c1"># Upwind solve</span>
+   <span class="k">def</span> <span class="nf">upwindSolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">u0</span><span class="p">):</span>
+	   <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">u0</span><span class="p">)</span>
+
+<span class="c1">#############  </span>
+<span class="c1"># Start of the code</span>
+<span class="c1">###################</span>
+
+<span class="c1"># constants  </span>
+<span class="n">N</span><span class="p">,</span><span class="n">x0</span><span class="p">,</span><span class="n">xN</span><span class="p">,</span><span class="n">deltaT</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">T</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mf">0.1</span>
+<span class="c1"># initialization of constants</span>
+<span class="n">LA1D</span> <span class="o">=</span> <span class="n">LinearAdvection1D</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">xN</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">deltaT</span><span class="p">,</span><span class="n">T</span><span class="p">)</span> 
+
+<span class="c1"># initial value</span>
+<span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">LA1D</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span><span class="n">LA1D</span><span class="o">.</span><span class="n">xN</span><span class="p">,</span><span class="n">LA1D</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+
+<span class="c1"># initial value</span>
+<span class="n">u0</span><span class="o">=</span><span class="p">[</span><span class="mf">0.</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">LA1D</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">9</span><span class="p">):</span>
+	<span class="n">u0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>    
+	
+<span class="c1">#plot of initial value    </span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">u0</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Initial value&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="c1"># calculating solution if CFL&lt;=1</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">LA1D</span><span class="o">.</span><span class="n">checkCFL</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">):</span>
+	<span class="k">print</span><span class="p">(</span><span class="s2">&quot;CFL number is: &quot;</span><span class="p">,</span> <span class="n">LA1D</span><span class="o">.</span><span class="n">CFL</span><span class="p">())</span>
+	<span class="n">LA1D</span><span class="o">.</span><span class="n">upwindMatrixAssembly</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">LA1D</span><span class="o">.</span><span class="n">T</span><span class="o">/</span><span class="n">LA1D</span><span class="o">.</span><span class="n">deltaT</span><span class="p">)):</span>
+		<span class="n">u</span><span class="o">=</span><span class="n">LA1D</span><span class="o">.</span><span class="n">upwindSolve</span><span class="p">(</span><span class="n">u0</span><span class="p">)</span>
+		<span class="n">u0</span><span class="o">=</span><span class="n">u</span>
+<span class="k">else</span><span class="p">:</span>
+	<span class="k">print</span><span class="p">(</span><span class="s2">&quot;CFL number is greater than 1. CFL: &quot;</span><span class="p">,</span> <span class="n">LA1D</span><span class="o">.</span><span class="n">CFL</span><span class="p">())</span>
+
+<span class="c1"># ploting the last solution</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">u</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Solution at t=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">LA1D</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/LA1D_Python.png"><img alt="alternate text" class="align-center" src="_images/LA1D_Python.png" style="width: 500px; height: 400px;" /></a>
+<p>For the explanaition of the code, please take a look at the youtube vidoes.</p>
+</div>
+<div class="section" id="matlab-code">
+<h4>Matlab Code<a class="headerlink" href="#matlab-code" title="Permalink to this headline">¶</a></h4>
+<p>Here is a Matlab code for modeling the 1D linear advection equation using upwind method described above. First we define a class called LinearAdvection1D:</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span>	<span class="k">classdef</span> <span class="n">LinearAdvection1D</span> <span class="o">&lt;</span> <span class="n">handle</span>    
+		<span class="k">properties</span>
+			<span class="c">%  constants</span>
+			<span class="n">A</span><span class="p">;</span><span class="n">N</span><span class="p">;</span><span class="n">x0</span><span class="p">;</span><span class="n">xN</span><span class="p">;</span><span class="n">deltaT</span><span class="p">;</span><span class="n">c</span><span class="p">;</span><span class="n">T</span><span class="p">;</span>
+		<span class="k">end</span>
+		
+		<span class="k">methods</span>
+			<span class="c">% Initialization of constants</span>
+<span class="k">			function</span><span class="w"> </span>self <span class="p">=</span><span class="w"> </span><span class="nf">LinearAdvection1D</span><span class="p">(</span>N,x0,xN,deltaT,c,T<span class="p">)</span><span class="w"> </span>
+<span class="w">				</span><span class="n">self</span><span class="p">.</span><span class="n">N</span> <span class="p">=</span> <span class="n">N</span><span class="p">;</span> <span class="n">self</span><span class="p">.</span><span class="n">x0</span> <span class="p">=</span> <span class="n">x0</span><span class="p">;</span> <span class="n">self</span><span class="p">.</span><span class="n">xN</span> <span class="p">=</span> <span class="n">xN</span><span class="p">;</span> 
+				<span class="n">self</span><span class="p">.</span><span class="n">deltaT</span> <span class="p">=</span> <span class="n">deltaT</span><span class="p">;</span>
+				<span class="n">self</span><span class="p">.</span><span class="n">c</span> <span class="p">=</span> <span class="n">c</span><span class="p">;</span> <span class="n">self</span><span class="p">.</span><span class="n">T</span> <span class="p">=</span> <span class="n">T</span><span class="p">;</span><span class="n">self</span><span class="p">.</span><span class="n">A</span> <span class="p">=</span> <span class="nb">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">);</span>
+			<span class="k">end</span>
+			<span class="c">% CFL number funct.</span>
+<span class="k">			function</span><span class="w"> </span>outputArg <span class="p">=</span><span class="w"> </span><span class="nf">CFL</span><span class="p">(</span>self<span class="p">)</span><span class="w"> </span>
+<span class="w">				</span><span class="n">deltaX</span><span class="p">=</span> <span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">xN</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">x0</span><span class="p">)</span><span class="o">/</span><span class="n">self</span><span class="p">.</span><span class="n">N</span> <span class="p">;</span>
+			   <span class="n">outputArg</span> <span class="p">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">c</span><span class="o">*</span><span class="n">self</span><span class="p">.</span><span class="n">deltaT</span><span class="o">/</span><span class="n">deltaX</span><span class="p">);</span>
+			<span class="k">end</span>
+			<span class="c">% check CFL number &lt;=1 or not.</span>
+<span class="k">			function</span><span class="w"> </span>flag<span class="p">=</span><span class="nf">checkCFL</span><span class="p">(</span>self<span class="p">)</span><span class="w"></span>
+<span class="w">			   </span><span class="k">if</span> <span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">CFL</span><span class="p">()</span><span class="o">&lt;</span><span class="p">=</span><span class="mi">1</span><span class="p">)</span>
+					<span class="n">flag</span><span class="p">=</span><span class="n">true</span><span class="p">;</span>
+			   <span class="k">else</span>
+					<span class="n">flag</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+			   <span class="k">end</span> 
+			<span class="k">end</span>
+			<span class="c">% Matrix assembly of LA1D</span>
+<span class="k">			function</span><span class="w"> </span><span class="nf">upwindMatrixAssembly</span><span class="p">(</span>self<span class="p">)</span><span class="w"></span>
+<span class="w">			   </span><span class="n">alpha_min</span><span class="p">=</span><span class="n">min</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">c</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+			   <span class="n">alpha_max</span><span class="p">=</span><span class="n">max</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">c</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+			   <span class="n">a1</span><span class="p">=</span><span class="n">alpha_max</span><span class="o">*</span><span class="nb">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">self</span><span class="p">.</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+			   <span class="n">a2</span><span class="p">=(</span><span class="mi">1</span><span class="o">+</span><span class="n">alpha_min</span><span class="o">-</span><span class="n">alpha_max</span><span class="p">)</span><span class="o">*</span><span class="nb">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">self</span><span class="p">.</span><span class="n">N</span><span class="p">);</span>
+			   <span class="n">a3</span><span class="p">=</span><span class="o">-</span><span class="n">alpha_min</span><span class="o">*</span><span class="nb">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">self</span><span class="p">.</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+			   <span class="n">self</span><span class="p">.</span><span class="n">A</span><span class="p">=</span><span class="nb">diag</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="nb">diag</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="nb">diag</span><span class="p">(</span><span class="n">a3</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+			   <span class="n">self</span><span class="p">.</span><span class="n">A</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="k">end</span><span class="p">)=</span><span class="n">alpha_max</span><span class="p">;</span>
+			   <span class="n">self</span><span class="p">.</span><span class="n">A</span><span class="p">(</span><span class="k">end</span><span class="p">,</span><span class="mi">1</span><span class="p">)=</span><span class="o">-</span><span class="n">alpha_min</span><span class="p">;</span>
+			<span class="k">end</span>
+			<span class="c">% Upwind solve</span>
+<span class="k">			function</span><span class="w"> </span>x <span class="p">=</span><span class="w"> </span><span class="nf">upwindSolve</span><span class="p">(</span>self,u0<span class="p">)</span><span class="w"></span>
+<span class="w">				</span><span class="n">x</span><span class="p">=</span><span class="n">transpose</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">A</span><span class="o">\</span><span class="n">transpose</span><span class="p">(</span><span class="n">u0</span><span class="p">));</span>
+			<span class="k">end</span>
+		<span class="k">end</span>
+	<span class="k">end</span>
+</pre></div>
+</div>
+<p>For the main code we use LinearAdvection1D class in the folloing m file.</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="c">% LA1D_m.m</span>
+<span class="n">clc</span>
+<span class="n">clear</span> <span class="n">all</span>
+
+<span class="c">% constants</span>
+<span class="n">N</span><span class="p">=</span><span class="mi">20</span><span class="p">;</span><span class="n">x0</span><span class="p">=</span><span class="mf">0.</span><span class="p">;</span><span class="n">xN</span><span class="p">=</span><span class="mf">1.</span><span class="p">;</span><span class="n">deltaT</span><span class="p">=</span><span class="mf">0.01</span><span class="p">;</span><span class="n">c</span><span class="p">=</span><span class="mf">1.</span><span class="p">;</span><span class="n">T</span><span class="p">=</span><span class="mf">0.1</span><span class="p">;</span>
+<span class="c">% object LA1D initialization</span>
+<span class="n">LA1D</span><span class="p">=</span><span class="n">LinearAdvection1D</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="n">x0</span><span class="p">,</span><span class="n">xN</span><span class="p">,</span><span class="n">deltaT</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">T</span><span class="p">);</span>
+
+<span class="n">x</span><span class="p">=</span><span class="nb">linspace</span><span class="p">(</span><span class="n">LA1D</span><span class="p">.</span><span class="n">x0</span><span class="p">,</span><span class="n">LA1D</span><span class="p">.</span><span class="n">xN</span><span class="p">,</span><span class="n">LA1D</span><span class="p">.</span><span class="n">N</span><span class="p">);</span>
+<span class="c">% initial value</span>
+<span class="n">u0</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">LA1D</span><span class="p">.</span><span class="n">N</span><span class="p">);</span>
+<span class="k">for</span> <span class="nb">i</span><span class="p">=</span><span class="mi">5</span><span class="p">:</span><span class="mi">10</span>
+   <span class="n">u0</span><span class="p">(</span><span class="nb">i</span><span class="p">)=</span><span class="mi">1</span><span class="p">;</span>
+<span class="k">end</span>
+<span class="c">% plot of initial value</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">u0</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span>&quot;<span class="n">x</span>&quot;<span class="p">)</span>
+<span class="n">ylabel</span><span class="p">(</span>&quot;<span class="n">u</span>&quot;<span class="p">)</span>
+
+<span class="c">% calculating solution if CFL&lt;=1</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">LA1D</span><span class="p">.</span><span class="n">checkCFL</span><span class="p">()</span><span class="o">==</span> <span class="n">true</span><span class="p">)</span>
+	<span class="nb">disp</span><span class="p">(</span><span class="n">strcat</span><span class="p">(</span>&quot;<span class="n">CFL</span> <span class="n">number</span> <span class="n">is</span><span class="p">:</span> &quot;<span class="p">,</span><span class="n">num2str</span><span class="p">(</span><span class="n">LA1D</span><span class="p">.</span><span class="n">CFL</span><span class="p">())))</span>
+	<span class="n">LA1D</span><span class="p">.</span><span class="n">upwindMatrixAssembly</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">t</span><span class="p">=</span><span class="mi">0</span><span class="p">:</span><span class="n">uint8</span><span class="p">(</span><span class="n">LA1D</span><span class="p">.</span><span class="n">T</span><span class="o">/</span><span class="n">LA1D</span><span class="p">.</span><span class="n">deltaT</span><span class="p">)</span>
+		<span class="n">u</span><span class="p">=</span><span class="n">LA1D</span><span class="p">.</span><span class="n">upwindSolve</span><span class="p">(</span><span class="n">u0</span><span class="p">);</span>
+		<span class="n">u0</span><span class="p">=</span><span class="n">u</span><span class="p">;</span>
+	<span class="k">end</span>
+<span class="k">else</span>
+	<span class="nb">disp</span><span class="p">(</span><span class="n">strcat</span><span class="p">(</span>&quot;<span class="n">CFL</span> <span class="n">number</span> <span class="n">is</span> <span class="n">greater</span> <span class="n">than</span> <span class="mf">1.</span> <span class="n">CFL</span><span class="p">:</span> &quot;<span class="p">,</span><span class="n">num2str</span><span class="p">(</span><span class="n">LA1D</span><span class="p">.</span><span class="n">CFL</span><span class="p">())))</span>
+<span class="k">end</span>
+
+<span class="c">% ploting the last solution</span>
+<span class="n">hold</span> <span class="n">on</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">u</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">({</span>&quot;<span class="n">Initial</span> <span class="n">value</span>&quot;<span class="p">,</span><span class="n">strcat</span><span class="p">(</span>&quot;<span class="n">Solution</span> <span class="n">at</span> <span class="n">t</span><span class="p">=</span>&quot;<span class="p">,</span><span class="n">num2str</span><span class="p">(</span><span class="n">LA1D</span><span class="p">.</span><span class="n">T</span><span class="p">))},</span><span class="s">&#39;Location&#39;</span><span class="p">,</span><span class="s">&#39;east&#39;</span><span class="p">)</span>
+<span class="n">axis</span><span class="p">([</span><span class="mi">0</span> <span class="mf">1.1</span>  <span class="mi">0</span> <span class="mf">1.1</span><span class="p">])</span> 
+<span class="n">grid</span> <span class="n">on</span>
+</pre></div>
+</div>
+<p>For the explanaition of the code, please take a look at the youtube vidoes.</p>
+<a class="reference internal image-reference" href="_images/LA1D_Matlab.png"><img alt="alternate text" class="align-center" src="_images/LA1D_Matlab.png" style="width: 500px; height: 400px;" /></a>
+</div>
+<div class="section" id="julia-code">
+<h4>Julia Code<a class="headerlink" href="#julia-code" title="Permalink to this headline">¶</a></h4>
+<p>Here is a Julia code for modeling the 1D linear advection equation using upwind method described above.</p>
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span> 
+<span class="k">type</span> <span class="n">LinearAdvection1d</span>
+    <span class="c"># dataIn  [c,x0,xN,deltaT,T]</span>
+    <span class="n">dataIn</span><span class="o">::</span><span class="kt">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span><span class="mi">1</span><span class="p">}</span>     
+    <span class="n">N</span><span class="o">::</span><span class="kt">Int</span>    
+    
+    <span class="n">Initialize</span><span class="o">::</span><span class="kt">Function</span>
+    <span class="n">CFL</span><span class="o">::</span><span class="kt">Function</span>
+    <span class="n">checkCFL</span><span class="o">::</span><span class="kt">Function</span>
+    <span class="n">upwindMatrixAssembly</span><span class="o">::</span><span class="kt">Function</span>
+    <span class="n">upwindSolve</span><span class="o">::</span><span class="kt">Function</span>
+    
+    <span class="k">function</span> <span class="n">LinearAdvection1d</span><span class="p">()</span>
+        <span class="n">self</span> <span class="o">=</span> <span class="n">new</span><span class="p">()</span>
+        
+        <span class="n">self</span><span class="o">.</span><span class="n">Initialize</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="n">dataIn</span><span class="o">::</span><span class="kt">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span><span class="mi">1</span><span class="p">},</span> <span class="n">N</span><span class="o">::</span><span class="kt">Int</span><span class="p">)</span>
+            <span class="n">self</span><span class="o">.</span><span class="n">dataIn</span> <span class="o">=</span> <span class="n">dataIn</span>
+            <span class="n">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="n">N</span>
+        <span class="k">end</span>
+        <span class="n">self</span><span class="o">.</span><span class="n">CFL</span> <span class="o">=</span> <span class="k">function</span> <span class="p">()</span> 
+            <span class="n">deltaX</span><span class="o">=</span> <span class="p">(</span><span class="n">self</span><span class="o">.</span><span class="n">dataIn</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">self</span><span class="o">.</span><span class="n">dataIn</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="n">self</span><span class="o">.</span><span class="n">N</span>
+            <span class="k">return</span> <span class="n">abs</span><span class="p">(</span><span class="n">self</span><span class="o">.</span><span class="n">dataIn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">self</span><span class="o">.</span><span class="n">dataIn</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">/</span><span class="n">deltaX</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="n">self</span><span class="o">.</span><span class="n">checkCFL</span> <span class="o">=</span> <span class="k">function</span> <span class="p">()</span>
+            <span class="k">return</span>  <span class="n">self</span><span class="o">.</span><span class="n">CFL</span><span class="p">()</span><span class="o">&lt;=</span><span class="mi">1</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span>
+        <span class="k">end</span>
+
+        <span class="n">self</span><span class="o">.</span><span class="n">upwindMatrixAssembly</span> <span class="o">=</span> <span class="k">function</span><span class="p">()</span> 
+            <span class="n">alpha_min</span><span class="o">=</span><span class="n">min</span><span class="p">(</span><span class="n">self</span><span class="o">.</span><span class="n">dataIn</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">alpha_max</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">self</span><span class="o">.</span><span class="n">dataIn</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">a1</span><span class="o">=</span><span class="p">[</span><span class="n">alpha_max</span> <span class="k">for</span> <span class="n">n</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">self</span><span class="o">.</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">a2</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="o">+</span><span class="n">alpha_min</span><span class="o">-</span><span class="n">alpha_max</span> <span class="k">for</span> <span class="n">n</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">self</span><span class="o">.</span><span class="n">N</span><span class="p">]</span>
+            <span class="n">a3</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="n">alpha_min</span> <span class="k">for</span> <span class="n">n</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">self</span><span class="o">.</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">A</span><span class="o">=</span><span class="kt">Tridiagonal</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">a2</span><span class="p">,</span><span class="n">a3</span><span class="p">)</span><span class="o">+</span><span class="n">zeros</span><span class="p">(</span><span class="n">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span><span class="n">self</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+            <span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="k">end</span><span class="p">]</span><span class="o">=</span><span class="n">alpha_max</span>
+            <span class="n">A</span><span class="p">[</span><span class="k">end</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">=-</span><span class="n">alpha_min</span>
+            <span class="k">return</span> <span class="n">A</span>
+        <span class="k">end</span>
+        
+        <span class="n">self</span><span class="o">.</span><span class="n">upwindSolve</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="n">u0</span><span class="o">::</span><span class="kt">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span><span class="mi">1</span><span class="p">})</span>
+             <span class="k">return</span> <span class="n">self</span><span class="o">.</span><span class="n">upwindMatrixAssembly</span><span class="p">()</span><span class="o">\</span><span class="n">u0</span>
+        <span class="k">end</span>        
+    <span class="k">end</span> 
+<span class="k">end</span>
+
+<span class="c">#####################</span>
+<span class="c"># Start of the code</span>
+<span class="c">#####################</span>
+
+<span class="n">N</span><span class="p">,</span><span class="n">x0</span><span class="p">,</span><span class="n">xN</span><span class="p">,</span><span class="n">deltaT</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">T</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mf">0.1</span>
+<span class="n">LA1D</span><span class="o">=</span><span class="n">LinearAdvection1d</span><span class="p">()</span>
+<span class="n">LA1D</span><span class="o">.</span><span class="n">self</span><span class="o">.</span><span class="n">Initialize</span><span class="p">([</span><span class="n">c</span><span class="p">;</span><span class="n">x0</span><span class="p">;</span><span class="n">xN</span><span class="p">;</span><span class="n">deltaT</span><span class="p">;</span><span class="n">T</span><span class="p">],</span><span class="n">N</span><span class="p">)</span>
+<span class="n">LA1D</span><span class="o">.</span><span class="n">self</span><span class="o">.</span><span class="n">checkCFL</span><span class="p">()</span>
+
+<span class="n">u0</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span> <span class="k">for</span> <span class="n">n</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">];</span>
+<span class="n">u0</span><span class="p">[</span><span class="mi">5</span><span class="o">:</span><span class="mi">10</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+
+<span class="n">PyPlot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">u0</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Initial value&quot;</span><span class="p">)</span>
+
+
+<span class="n">x</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span><span class="n">xN</span><span class="p">,</span><span class="n">N</span><span class="p">);</span>
+     
+        
+<span class="k">if</span> <span class="n">LA1D</span><span class="o">.</span><span class="n">self</span><span class="o">.</span><span class="n">checkCFL</span><span class="p">()</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;CFL number is: &quot;</span><span class="p">,</span> <span class="n">LA1D</span><span class="o">.</span><span class="n">self</span><span class="o">.</span><span class="n">CFL</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span> <span class="o">:</span> <span class="n">floor</span><span class="p">(</span><span class="kt">Integer</span><span class="p">,</span><span class="n">T</span><span class="o">/</span><span class="n">deltaT</span><span class="p">)</span>
+        <span class="n">u</span><span class="o">=</span><span class="n">LA1D</span><span class="o">.</span><span class="n">self</span><span class="o">.</span><span class="n">upwindSolve</span><span class="p">(</span><span class="n">u0</span><span class="p">)</span>
+        <span class="n">u0</span><span class="o">=</span><span class="n">u</span>
+    <span class="k">end</span>
+<span class="k">else</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;CFL number is greater than 1. CFL: &quot;</span><span class="p">,</span> <span class="n">LA1D</span><span class="o">.</span><span class="n">self</span><span class="o">.</span><span class="n">CFL</span><span class="p">())</span>    
+<span class="k">end</span>
+
+<span class="n">PyPlot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">u0</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">string</span><span class="p">(</span><span class="s">&quot;Solution at t=&quot;</span><span class="p">,</span><span class="n">T</span><span class="p">))</span>
+<span class="n">PyPlot</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">PyPlot</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">linestyle</span><span class="o">=</span><span class="s">&quot;dotted&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For the explanaition of the code, please take a look at the youtube vidoes.</p>
+<a class="reference internal image-reference" href="_images/LA1D_Julia.png"><img alt="alternate text" class="align-center" src="_images/LA1D_Julia.png" style="width: 500px; height: 400px;" /></a>
+</div>
+</div>
+<div class="section" id="higher-order-upwind-methods">
+<h3>Higher Order Upwind Methods<a class="headerlink" href="#higher-order-upwind-methods" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="licence.html" class="btn btn-neutral float-right" title="licence" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to Diff. Academy’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Peyman Davvalo Khongar.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
