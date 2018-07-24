@@ -91,7 +91,7 @@ matrix  :math:`\mathbf{A}` for equation :eq:`adv_1d_upwind` is:
      \vdots & \vdots & \ddots & \ddots &  \ddots & \vdots & \vdots \\
     0 &0 &... & \alpha_{max} & (1+\alpha_{min}-\alpha_{max}) &  -\alpha_{min} & 0 \\
     0 &0 &... & 0 & \alpha_{max} & (1+\alpha_{min}-\alpha_{max}) &  -\alpha_{min}  \\
-    -\alpha_{min} &0 &... & 0 & 0& 0 \alpha_{max} & (1+\alpha_{min}-\alpha_{max})  \\
+    -\alpha_{min} &0 &... & 0 & 0&  \alpha_{max} & (1+\alpha_{min}-\alpha_{max})  \\
     \end{bmatrix}_{(N+1)\times(N+1)}
 
 Stability And Accuracy
@@ -162,6 +162,70 @@ For the explanaition of the code, please take a look at the youtube vidoes.
    :align: center	
 
    
-Higher Order Upwind Methods
----------------------------   
+Modified Equation
+^^^^^^^^^^^^^^^^^ 
 
+Modified equation first was introduced by Warming et al. which is a powerful tool of analysis the truncation error of time-dependent linear PDEs.
+In particular, the effect of diffusion or dispersion of the error terms can be studied using modified equation. Considering equation :eq:`adv_1d_upwind`, the 
+modified equation refers to the following formal equation:
+
+.. math:: v(x,t+\Delta t) = \alpha_{max} v(x-\Delta x,t) + (1+\alpha_{min}-\alpha_{max}) v(x,t) - \alpha_{min} v(x+\Delta x,t)
+   :label: modif-upwind
+   
+Assuming :math:`v` is :math:`C^{\infty}`, one can use taylor expansion of all terms in the above equation and deduce the folloing:
+
+.. math:: v_{t} +\Delta t v_{tt} +O(\Delta t^2)= -(\gamma_{max}+\gamma_{min}) v_x + \frac{\Delta x}{2}(\gamma_{max}-\gamma_{min}) v_{xx} - \frac{\Delta^{2} x}{6}(\gamma_{max}+\gamma_{min}) v_{xxx} +O(\Delta x^3)
+   :label: modif-upwind1
+
+using :math:`\gamma_{max}+\gamma_{min}= c` and :math:`\gamma_{max}-\gamma_{min}= sign(c)c=|c|` we have:
+   
+.. math:: v_{t}+ c v_x  =-\Delta t v_{tt} + \Big(\frac{\Delta x}{2} |c|\Big)v_{xx} - \Big(\frac{\Delta^{2} x}{6}c\Big) v_{xxx} +O(\Delta^2 t,\Delta^3 x)
+   :label: modif-upwind2   
+   
+taking the partial derivative of equation :eq:`modif-upwind2` with respect :math:`t` and :math:`x` we have:
+
+   
+.. math:: v_{tt}+ c v_{xt}  =-\Delta t v_{ttt} + \Big(\frac{\Delta x}{2} |c|\Big)v_{xxt} - \Big(\frac{\Delta^{2} x}{6}c\Big) v_{xxxt} +O(\Delta^2 t,\Delta^3 x)
+   :label: modif-upwind3  
+   
+   
+.. math:: v_{tx}+ c v_{xx}  =-\Delta t v_{ttx} + \Big(\frac{\Delta x}{2} |c|\Big)v_{xxx} - \Big(\frac{\Delta^{2} x}{6}c\Big) v_{xxxx} +O(\Delta^2 t,\Delta^3 x)
+   :label: modif-upwind4     
+   
+If we multiply equation :eq:`modif-upwind4`  by :math:`-c` and sum it with equation :eq:`modif-upwind3` we get:
+
+.. math:: v_{tt} =c^2 v_{xx}+\Delta t\Big(c v_{ttx} -t v_{ttt}\Big) + \Delta x \Big(\frac{|c|}{2} v_{xxt}  - c \frac{|c|}{2} v_{xxx} \Big) - \Delta^2 x \Big(\frac{c }{6} v_{xxxt} +\frac{c^{2} }{6}  v_{xxxx}\Big) +O(\Delta^2 t,\Delta^3 x)
+   :label: modif-upwind5   
+   
+Substituting equation :eq:`modif-upwind5` to equation :eq:`modif-upwind2` we have:
+
+.. math:: v_{t}+ c v_x  = \frac{c \Delta x}{2} \Big(Sign(c) - \frac{c \Delta t}{\Delta x}  \Big)v_{xx} +O(\Delta^2 t,\Delta^3 x)
+   :label: modif-upwind-f   
+   
+Formally, :eq:`modif-upwind-f` is the PDE which actually solved by upwind method. As can be seen, the first term in the right hand side creates artificial diffusion for equation :eq:`adv_1d`
+when solved numerically using upwind method. This shows that the upwind method creates numerical diffusion as wave propagates during time.
+This equation also shows that the method is first order accurate. As we mentioned in equation :eq:`cfl_cond`, upwind method is stable if :math:`|\frac{c \Delta t}{\Delta x}| \le 1`. This means that 
+the diffusion coefficient in equation :eq:`modif-upwind-f` :math:`\frac{c \Delta x}{2} \Big(Sign(c) - \frac{c \Delta t}{\Delta x}\Big)` is positive.
+
+
+Error due to Diffusion and Dispersion 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Consider a periodic domain of :math:`[0,\pi]` for :eq:`adv_1d` and suppose that :math:`\Delta x= 2\pi /N`.
+Since equation :eq:`adv_1d` is linear and defined in a periodic boundary condition and its corresponding discretization upwind method is also linear, 
+any solution of equation is a finite combination of Fourier modes
+
+.. math:: \psi_{j} = \frac{1}{N} \sum_{k=0}^{N-1} a_k e^{ikj\Delta x}
+   :label: fourMod 
+   
+
+Now assume wave-like solution of    
+
+.. math:: \psi(x,t) = \psi_0 e^{i(kx-\omega t)}
+   :label: wave    
+
+substituting equation :eq:`wave` to :eq:`adv_1d`, we get :math:`\omega (k)=ck` which corresponds to the relation between each wave frequency and its wavenumber :math:`k`. In general this relation is called dispersion.
+if we use discretization of :math:`x_{j}=j\Delta x` and :math:`t_{n}=n\Delta t`, for :math:`(j,n=0,1,...)`, then the solution at  :math:`x_j` at time :math:`t_n` 
+is :math:`u(x_j,t_n)`. We can see how the solution is amplified (or damped) by considering analytical amplificaiton factor:
+
+.. math:: A_a =\frac{u(x_j,t_{n+1})}{u(x_j,t_{n})}=e^{-i\omega \Delta t}
+   :label: A_a    

@@ -92,15 +92,15 @@
 <li class="toctree-l4"><a class="reference internal" href="#python-code">Python Code</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#matlab-code">Matlab Code</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#julia-code">Julia Code</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modified-equation">Modified Equation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#error-due-to-diffusion-and-dispersion">Error due to Diffusion and Dispersion</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#higher-order-upwind-methods">Higher Order Upwind Methods</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="licence.html">licence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="licence.html#contact">contact</a></li>
 </ul>
 
             
@@ -226,7 +226,7 @@ matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equ
   \vdots &amp; \vdots &amp; \ddots &amp; \ddots &amp;  \ddots &amp; \vdots &amp; \vdots \\
  0 &amp;0 &amp;... &amp; \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max}) &amp;  -\alpha_{min} &amp; 0 \\
  0 &amp;0 &amp;... &amp; 0 &amp; \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max}) &amp;  -\alpha_{min}  \\
- -\alpha_{min} &amp;0 &amp;... &amp; 0 &amp; 0&amp; 0 \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max})  \\
+ -\alpha_{min} &amp;0 &amp;... &amp; 0 &amp; 0&amp;  \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max})  \\
  \end{bmatrix}_{(N+1)\times(N+1)}\end{split}\]</div>
 <div class="section" id="id1">
 <h4>Stability And Accuracy<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
@@ -493,9 +493,51 @@ matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equ
 <p>For the explanaition of the code, please take a look at the youtube vidoes.</p>
 <a class="reference internal image-reference" href="_images/LA1D_Julia.png"><img alt="alternate text" class="align-center" src="_images/LA1D_Julia.png" style="width: 500px; height: 400px;" /></a>
 </div>
+<div class="section" id="modified-equation">
+<h4>Modified Equation<a class="headerlink" href="#modified-equation" title="Permalink to this headline">¶</a></h4>
+<p>Modified equation first was introduced by Warming et al. which is a powerful tool of analysis the truncation error of time-dependent linear PDEs.
+In particular, the effect of diffusion or dispersion of the error terms can be studied using modified equation. Considering equation <a class="reference internal" href="#equation-adv-1d-upwind">(7)</a>, the
+modified equation refers to the following formal equation:</p>
+<div class="math notranslate nohighlight" id="equation-modif-upwind">
+<span class="eqno">(11)<a class="headerlink" href="#equation-modif-upwind" title="Permalink to this equation">¶</a></span>\[v(x,t+\Delta t) = \alpha_{max} v(x-\Delta x,t) + (1+\alpha_{min}-\alpha_{max}) v(x,t) - \alpha_{min} v(x+\Delta x,t)\]</div>
+<p>Assuming <span class="math notranslate nohighlight">\(v\)</span> is <span class="math notranslate nohighlight">\(C^{\infty}\)</span>, one can use taylor expansion of all terms in the above equation and deduce the folloing:</p>
+<div class="math notranslate nohighlight" id="equation-modif-upwind1">
+<span class="eqno">(12)<a class="headerlink" href="#equation-modif-upwind1" title="Permalink to this equation">¶</a></span>\[v_{t} +\Delta t v_{tt} +O(\Delta t^2)= -(\gamma_{max}+\gamma_{min}) v_x + \frac{\Delta x}{2}(\gamma_{max}-\gamma_{min}) v_{xx} - \frac{\Delta^{2} x}{6}(\gamma_{max}+\gamma_{min}) v_{xxx} +O(\Delta x^3)\]</div>
+<p>using <span class="math notranslate nohighlight">\(\gamma_{max}+\gamma_{min}= c\)</span> and <span class="math notranslate nohighlight">\(\gamma_{max}-\gamma_{min}= sign(c)c=|c|\)</span> we have:</p>
+<div class="math notranslate nohighlight" id="equation-modif-upwind2">
+<span class="eqno">(13)<a class="headerlink" href="#equation-modif-upwind2" title="Permalink to this equation">¶</a></span>\[v_{t}+ c v_x  =-\Delta t v_{tt} + \Big(\frac{\Delta x}{2} |c|\Big)v_{xx} - \Big(\frac{\Delta^{2} x}{6}c\Big) v_{xxx} +O(\Delta^2 t,\Delta^3 x)\]</div>
+<p>taking the partial derivative of equation <a class="reference internal" href="#equation-modif-upwind2">(13)</a> with respect <span class="math notranslate nohighlight">\(t\)</span> and <span class="math notranslate nohighlight">\(x\)</span> we have:</p>
+<div class="math notranslate nohighlight" id="equation-modif-upwind3">
+<span class="eqno">(14)<a class="headerlink" href="#equation-modif-upwind3" title="Permalink to this equation">¶</a></span>\[v_{tt}+ c v_{xt}  =-\Delta t v_{ttt} + \Big(\frac{\Delta x}{2} |c|\Big)v_{xxt} - \Big(\frac{\Delta^{2} x}{6}c\Big) v_{xxxt} +O(\Delta^2 t,\Delta^3 x)\]</div>
+<div class="math notranslate nohighlight" id="equation-modif-upwind4">
+<span class="eqno">(15)<a class="headerlink" href="#equation-modif-upwind4" title="Permalink to this equation">¶</a></span>\[v_{tx}+ c v_{xx}  =-\Delta t v_{ttx} + \Big(\frac{\Delta x}{2} |c|\Big)v_{xxx} - \Big(\frac{\Delta^{2} x}{6}c\Big) v_{xxxx} +O(\Delta^2 t,\Delta^3 x)\]</div>
+<p>If we multiply equation <a class="reference internal" href="#equation-modif-upwind4">(15)</a>  by <span class="math notranslate nohighlight">\(-c\)</span> and sum it with equation <a class="reference internal" href="#equation-modif-upwind3">(14)</a> we get:</p>
+<div class="math notranslate nohighlight" id="equation-modif-upwind5">
+<span class="eqno">(16)<a class="headerlink" href="#equation-modif-upwind5" title="Permalink to this equation">¶</a></span>\[v_{tt} =c^2 v_{xx}+\Delta t\Big(c v_{ttx} -t v_{ttt}\Big) + \Delta x \Big(\frac{|c|}{2} v_{xxt}  - c \frac{|c|}{2} v_{xxx} \Big) - \Delta^2 x \Big(\frac{c }{6} v_{xxxt} +\frac{c^{2} }{6}  v_{xxxx}\Big) +O(\Delta^2 t,\Delta^3 x)\]</div>
+<p>Substituting equation <a class="reference internal" href="#equation-modif-upwind5">(16)</a> to equation <a class="reference internal" href="#equation-modif-upwind2">(13)</a> we have:</p>
+<div class="math notranslate nohighlight" id="equation-modif-upwind-f">
+<span class="eqno">(17)<a class="headerlink" href="#equation-modif-upwind-f" title="Permalink to this equation">¶</a></span>\[v_{t}+ c v_x  = \frac{c \Delta x}{2} \Big(Sign(c) - \frac{c \Delta t}{\Delta x}  \Big)v_{xx} +O(\Delta^2 t,\Delta^3 x)\]</div>
+<p>Formally, <a class="reference internal" href="#equation-modif-upwind-f">(17)</a> is the PDE which actually solved by upwind method. As can be seen, the first term in the right hand side creates artificial diffusion for equation <a class="reference internal" href="#equation-adv-1d">(1)</a>
+when solved numerically using upwind method. This shows that the upwind method creates numerical diffusion as wave propagates during time.
+This equation also shows that the method is first order accurate. As we mentioned in equation <a class="reference internal" href="#equation-cfl-cond">(10)</a>, upwind method is stable if <span class="math notranslate nohighlight">\(|\frac{c \Delta t}{\Delta x}| \le 1\)</span>. This means that
+the diffusion coefficient in equation <a class="reference internal" href="#equation-modif-upwind-f">(17)</a> <span class="math notranslate nohighlight">\(\frac{c \Delta x}{2} \Big(Sign(c) - \frac{c \Delta t}{\Delta x}\Big)\)</span> is positive.</p>
 </div>
-<div class="section" id="higher-order-upwind-methods">
-<h3>Higher Order Upwind Methods<a class="headerlink" href="#higher-order-upwind-methods" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="error-due-to-diffusion-and-dispersion">
+<h4>Error due to Diffusion and Dispersion<a class="headerlink" href="#error-due-to-diffusion-and-dispersion" title="Permalink to this headline">¶</a></h4>
+<p>Consider a periodic domain of <span class="math notranslate nohighlight">\([0,\pi]\)</span> for <a class="reference internal" href="#equation-adv-1d">(1)</a> and suppose that <span class="math notranslate nohighlight">\(\Delta x= 2\pi /N\)</span>.
+Since equation <a class="reference internal" href="#equation-adv-1d">(1)</a> is linear and defined in a periodic boundary condition and its corresponding discretization upwind method is also linear,
+any solution of equation is a finite combination of Fourier modes</p>
+<div class="math notranslate nohighlight" id="equation-fourmod">
+<span class="eqno">(18)<a class="headerlink" href="#equation-fourmod" title="Permalink to this equation">¶</a></span>\[\psi_{j} = \frac{1}{N} \sum_{k=0}^{N-1} a_k e^{ikj\Delta x}\]</div>
+<p>Now assume wave-like solution of</p>
+<div class="math notranslate nohighlight" id="equation-wave">
+<span class="eqno">(19)<a class="headerlink" href="#equation-wave" title="Permalink to this equation">¶</a></span>\[\psi(x,t) = \psi_0 e^{i(kx-\omega t)}\]</div>
+<p>substituting equation <a class="reference internal" href="#equation-wave">(19)</a> to <a class="reference internal" href="#equation-adv-1d">(1)</a>, we get <span class="math notranslate nohighlight">\(\omega (k)=ck\)</span> which corresponds to the relation between each wave frequency and its wavenumber <span class="math notranslate nohighlight">\(k\)</span>. In general this relation is called dispersion.
+if we use discretization of <span class="math notranslate nohighlight">\(x_{j}=j\Delta x\)</span> and <span class="math notranslate nohighlight">\(t_{n}=n\Delta t\)</span>, for <span class="math notranslate nohighlight">\((j,n=0,1,...)\)</span>, then the solution at  <span class="math notranslate nohighlight">\(x_j\)</span> at time <span class="math notranslate nohighlight">\(t_n\)</span>
+is <span class="math notranslate nohighlight">\(u(x_j,t_n)\)</span>. We can see how the solution is amplified (or damped) by considering analytical amplificaiton factor:</p>
+<div class="math notranslate nohighlight" id="equation-a-a">
+<span class="eqno">(20)<a class="headerlink" href="#equation-a-a" title="Permalink to this equation">¶</a></span>\[A_a =\frac{u(x_j,t_{n+1})}{u(x_j,t_{n})}=e^{-i\omega \Delta t}\]</div>
+</div>
 </div>
 </div>
 </div>
