@@ -40,7 +40,9 @@ descritized uniformly as:
    
    x_{i}= x_{0}+ \Delta x   \qquad i=0,...,N 
    
-Let us assume that :math:`u_{i}^{n}:=u(x_i,t_n)`. Then using applying central spatial difference and the temporal forward Euler methods to equation :eq:`adv_1d`, we have:
+   
+Let us assume that :math:`u_{i}^{n}:=u(x_i,t_n)`. Then using applying central spatial difference and the temporal forward Euler methods to
+equation :eq:`adv_1d`, we have:
 
 .. math:: \frac{u_{i}^{n+1}-u_{i}^{n}}{\Delta t} + \frac{u_{i-1}^{n}-u_{i+1}^{n}}{2 \Delta x}  = 0
    :label: adv_1d_dis1
@@ -54,14 +56,50 @@ Stability And Accuracy
 ^^^^^^^^^^^^^^^^^^^^^^   
  
 
-Practically this method is not usefull since using von Neumann Stability Analysis, FTCS method is unconditionally unstable.
+Let assume that solution of equation :eq:`adv_1d` is periodic in the defined domain. Lets consider :math:`\psi(x,t)` is the solution of 
+equation :eq:`adv_1d`. Since this equation is a linear PDE, solution of this PDE is a sum of Fourier modes: 
+
+.. math:: \psi(x,t) = \sum_{k=-\infty}^{\infty} a_k e^{ikx} 
+   :label: for-mod  
+
+where :math:`k` is the wave number. Now let us study the stability of solution considering an individual wave number. Let us discretize 
+our space and time domain to :math:`x_{j}=j\Delta x` and :math:`t_{n}=n\Delta t`, for :math:`(j,n=0,1,...)`, then the solution at :math:`x_j` at
+time :math:`t_n` is :math:`\psi(x_j,t_n)`. We can see how the solution is amplified (or damped) by considering analytical
+amplification factor :math:`A_a`:
+ 
+.. math::  \psi(x,t_{n+1})= A_a \psi(x,t_{n})
+   :label: A_a    
+
+Using this and discretization of the spatial domain and considering the solution of one wave number, we have 
+
+.. math:: \psi_{j}^{n}=\psi(x_j,t_n) = A_a^n e^{ik x_j} = A_a^n e^{i \Delta x} 
+   :label: wave    
+       
+	   
+Using the same idea for numerical scheme, we can also consider numerical amplification factor :math:`A`:
+
+.. math:: \Psi_{j}^{n}=\Psi(x_j,t_n) = A^n e^{ik x_j} = A^n e^{i \Delta x} 
+   :label: wave-n
+
+where here :math:`\Psi` is our aproximated solution using a linear numerical scheme. Now we can use this equation in our numerical scheme and analyse its stability. Using equation :eq:`wave` in equation :eq:`adv_1d_dis` we have
+
+.. math:: A= 1 - i \frac{ \Delta t}{ \Delta x} sin(k \Delta x)   
+   :label: FTCS_A  
+
+In order that our numerical method to be stable, :math:`|A|` should be less than 1. Calculating :math:`|A|` we have 
+
+.. math:: |A|^2 = 1 + ( \frac{ \Delta t}{ \Delta x} sin(k \Delta x) )^2 
+   :label: FTCS_A2  
+
+The above equation can never be able to be less than 1. Practically this method is not usefull since using von Neumann Stability Analysis, 
+FTCS method is unconditionally unstable.
 
 
-Upwind Methods
---------------
+Upwind and Downwind Methods
+---------------------------
 
-Upwind methods refers to those methods that the spatial differences are skewed in the flow direction. The simplest upwind method is the discribed by
-backward (:math:`c > 0`) or forward (:math:`c < 0`) spatial difference and the temporal forward Euler methods. As it is mentioned, the choice between the two spatial methods are dictated by the
+Upwind and downwind methods refer to those methods that the spatial differences are skewed in the flow direction. The simplest upwind and downwind methods are the discribed by
+backward (:math:`c > 0`) or forward (:math:`c < 0`) spatial difference and the temporal forward Euler methods, respectively. As it is mentioned, the choice between the two spatial methods are dictated by the
 sign of :math:`c`, meaning the flow direction. Using the descritization methods described above we get:
  
 .. math:: \frac{u_{i}^{n+1}-u_{i}^{n}}{\Delta t} + \gamma_{min} \Big(\frac{u_{i+1}^{n}-u_{i}^{n}}{ \Delta x} \Big)+ \gamma_{max} \Big(\frac{u_{i}^{n}-u_{i-1}^{n}}{ \Delta x} \Big) = 0
@@ -94,16 +132,45 @@ matrix  :math:`\mathbf{A}` for equation :eq:`adv_1d_upwind` is:
     -\alpha_{min} &0 &... & 0 & 0&  \alpha_{max} & (1+\alpha_{min}-\alpha_{max})  \\
     \end{bmatrix}_{(N+1)\times(N+1)}
 
+As we mentioned above, if (:math:`c > 0`) we refer the discretization methods above as upwind and  if (:math:`c < 0`) as downwind.
+	
 Stability And Accuracy
 ^^^^^^^^^^^^^^^^^^^^^^   
 
-The above upwind method is first order accurate in both space. Using von Neumann Stability Analysis, this method is conditionally stable. The condition is:
+Using the same idea from previous section, we calculate the :math:`A` for upwind method:
+
+.. math:: A = (1-C)+C e^{-i k \Delta x}
+   :label: Upwind_AUp  
+   
+where :math:`C=\frac{c \Delta t}{\Delta x}`. Now calculating its norm, we have:
 
 
-.. math:: CFL= |\frac{c \Delta t}{\Delta x}| \le 1
+.. math:: |A|^2 = 1 - 2 C (1-C)(1-cos(k \Delta x))
+   :label: Upwind_A  
+
+If this method is stable, then :math:`|A| \leq 1`. Then we have,
+ 
+.. math::  1 - 2 C (1-C)(1-cos(k \Delta x)) \leq 1  \to 0 \le C (1-C)(sin^2 (k \Delta x / 2)) 
+   :label: Upwind_A2  
+ 
+which leads to 
+
+.. math:: C= \frac{c \Delta t}{\Delta x} \le 1
    :label: cfl_cond
+  
+ 
+Thus this method is conditionally stable. Using the same analogy, for the downwind method we have 
 
+.. math:: |A|^2 = 1 - 2 C (1+C)(1-cos(k \Delta x))
+   :label: dwind_A     
 
+and if the method is stable, then :math:`|A| \leq 1` leading to 
+ 
+.. math:: C= \frac{c \Delta t}{\Delta x} \geq -1
+   :label: cfl_cond-dw
+  
+
+ 
 Python Code
 ^^^^^^^^^^^  
 
@@ -183,7 +250,6 @@ using :math:`\gamma_{max}+\gamma_{min}= c` and :math:`\gamma_{max}-\gamma_{min}=
    :label: modif-upwind2   
    
 taking the partial derivative of equation :eq:`modif-upwind2` with respect :math:`t` and :math:`x` we have:
-
    
 .. math:: v_{tt}+ c v_{xt}  =-\Delta t v_{ttt} + \Big(\frac{\Delta x}{2} |c|\Big)v_{xxt} - \Big(\frac{\Delta^{2} x}{6}c\Big) v_{xxxt} +O(\Delta^2 t,\Delta^3 x)
    :label: modif-upwind3  
@@ -210,22 +276,83 @@ the diffusion coefficient in equation :eq:`modif-upwind-f` :math:`\frac{c \Delta
 
 Error due to Diffusion and Dispersion 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Consider a periodic domain of :math:`[0,\pi]` for :eq:`adv_1d` and suppose that :math:`\Delta x= 2\pi /N`.
-Since equation :eq:`adv_1d` is linear and defined in a periodic boundary condition and its corresponding discretization upwind method is also linear, 
-any solution of equation is a finite combination of Fourier modes
+ 
 
-.. math:: \psi_{j} = \frac{1}{N} \sum_{k=0}^{N-1} a_k e^{ikj\Delta x}
-   :label: fourMod 
-   
+Similar to von-Neumann stablity analysis, assume a wave-like solution of    
 
-Now assume wave-like solution of    
+.. math:: \psi(x,t) = e^{i(kx-\omega t)} = e^{-i \phi_a}
+   :label: wave-ds   
 
-.. math:: \psi(x,t) = \psi_0 e^{i(kx-\omega t)}
-   :label: wave    
-
-substituting equation :eq:`wave` to :eq:`adv_1d`, we get :math:`\omega (k)=ck` which corresponds to the relation between each wave frequency and its wavenumber :math:`k`. In general this relation is called dispersion.
+where :math:`\phi_a` is the wave phase. Substituting equation :eq:`wave-ds` to :eq:`adv_1d`, we get :math:`\omega (k)=ck` which corresponds to the relation between each 
+wave frequency and its wavenumber :math:`k`. In general this relation is called dispersion.
 if we use discretization of :math:`x_{j}=j\Delta x` and :math:`t_{n}=n\Delta t`, for :math:`(j,n=0,1,...)`, then the solution at  :math:`x_j` at time :math:`t_n` 
-is :math:`u(x_j,t_n)`. We can see how the solution is amplified (or damped) by considering analytical amplificaiton factor:
+is :math:`\psi(x_j,t_n)`. We can now consider the analytical amplification factor:
 
-.. math:: A_a =\frac{u(x_j,t_{n+1})}{u(x_j,t_{n})}=e^{-i\omega \Delta t}
-   :label: A_a    
+.. math:: A_a =\frac{\psi(x_j,t_{n+1})}{\psi(x_j,t_{n})}=e^{-i\omega \Delta t}
+   :label: A_a-n   
+
+Then wave phase also can be calculate using :math:`\omega (k)=ck` we have:
+
+.. math:: \phi_a = \omega \Delta t = c k \Delta t= CFL \times k \Delta x 
+   :label: phi_a    
+
+Using equations :eq:`A_a-n` and :eq:`wave-ds`, one can show that:
+   
+.. math:: \psi(x_j,t_n) = \psi_0 e^{i(kx-\omega t)} = \psi_0 A_a^n e^{i k x_j}
+   :label: wave_disc  
+
+   
+Since :math:`\omega (k)=ck` for linear advection equation, we can calculate the phase and group velocity, namely:
+
+.. math:: V_p =\frac{\omega}{k}=\frac{ck}{k}=c
+   :label: phase_v_ex 
+   
+.. math:: V_g =\frac{\partial \omega}{\partial k}=c
+   :label: group_v_ex 
+   
+This shows that the phase and group velocity are the same, meaning that the wave is non-dispersive. 
+   
+Now consider the upwind method and using the same termiology of equations :eq:`wave_disc` and :eq:`A_a-n`, we have:
+
+.. math:: \Psi(x_j,t_n) = \Psi_0 A^n e^{i k x_j}
+   :label: wave_disc_upw
+
+where :math:`A` is the numerical amplification factor and is defined as: 
+
+.. math:: A = \frac{\Psi_j^{n+1}}{\Psi_j^{n}}
+   :label: A
+
+Note that :math:`A_a` is derived from the analytical solution of the PDE and that :math:`A` is derived from 
+numerical approximation of the same PDE, which might not be in perfect agreement. 
+As we seen before, in the von-Neumann analysis of upwind method, :math:`A`  was calculated in equation :eq:`Upwind_AUp`. We can compare :math:`A_a` and 
+:math:`A` by considering the ratio their norm:
+ 
+.. math:: \epsilon_A = \frac{|A|}{|A_a|}= \sqrt{1-4C(1-C)sin^2(\frac{k \Delta x}{2} )}=\sqrt{1-4C(1-C)sin^2(\frac{\chi}{2} )}
+   :label: difer
+
+.. image:: images/ED.png
+   :width: 500px
+   :height: 400px
+   :alt: alternate text
+   :align: center	
+
+In the figure above we can see  for different values of :math:`C`, how :math:`\epsilon_A` changed as the frequency increases. As can be seen for :math:`C=1`,
+both analytical and numerical amplification magnitude are the same and equal to 1. This is the case that numerical solution is the exact solution of the advection equation.
+However, as :math:`C` decreases, for higher frequencies, :math:`\epsilon_A` decreases dramatically, meaning that the numerical amplitude is smaller than the exact one.   
+
+We can also do the same analysis for the phase which is associated to dispersion. Defining :math:`\epsilon_\phi` as the ratio between the numerical and analytical phase, 
+and using equation :eq:`Upwind_AUp`, we have
+
+.. math:: \epsilon_\phi = \frac{|\phi|}{|\phi_a|}= \frac{1}{C \chi} \frac{C sin(\chi)}{1-C (1-cos(\chi)}
+   :label: phier
+
+.. image:: images/EPHI.png
+   :width: 500px
+   :height: 400px
+   :alt: alternate text
+   :align: center	
+
+In the figure above we can see for different values of :math:`C`, how :math:`\epsilon_\phi` changed as the frequency increases. As can be seen, there is no dispersion error for :math:`C=1`
+and :math:`C=0.5`. for the values of :math:`C<0.5`, :math:`\epsilon_\phi<1` meaning that the numerical solution moves slower than the physical one. On the other hand for :math:`C>0.5`, this
+is vice versa.
+

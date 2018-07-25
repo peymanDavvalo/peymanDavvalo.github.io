@@ -87,7 +87,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#stability-and-accuracy">Stability And Accuracy</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#upwind-methods">Upwind Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#upwind-and-downwind-methods">Upwind and Downwind Methods</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id1">Stability And Accuracy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#python-code">Python Code</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#matlab-code">Matlab Code</a></li>
@@ -191,7 +191,8 @@ numerical methods.</p>
 descritized uniformly as:</p>
 <div class="math notranslate nohighlight" id="equation-ti">
 <span class="eqno">(3)<a class="headerlink" href="#equation-ti" title="Permalink to this equation">¶</a></span>\[ \begin{align}\begin{aligned}t_{n}= t_{0}+ \Delta t   \qquad n=0,...,T\\x_{i}= x_{0}+ \Delta x   \qquad i=0,...,N\end{aligned}\end{align} \]</div>
-<p>Let us assume that <span class="math notranslate nohighlight">\(u_{i}^{n}:=u(x_i,t_n)\)</span>. Then using applying central spatial difference and the temporal forward Euler methods to equation <a class="reference internal" href="#equation-adv-1d">(1)</a>, we have:</p>
+<p>Let us assume that <span class="math notranslate nohighlight">\(u_{i}^{n}:=u(x_i,t_n)\)</span>. Then using applying central spatial difference and the temporal forward Euler methods to
+equation <a class="reference internal" href="#equation-adv-1d">(1)</a>, we have:</p>
 <div class="math notranslate nohighlight" id="equation-adv-1d-dis1">
 <span class="eqno">(4)<a class="headerlink" href="#equation-adv-1d-dis1" title="Permalink to this equation">¶</a></span>\[\frac{u_{i}^{n+1}-u_{i}^{n}}{\Delta t} + \frac{u_{i-1}^{n}-u_{i+1}^{n}}{2 \Delta x}  = 0\]</div>
 <p>If we rearrange equation <a class="reference internal" href="#equation-adv-1d-dis1">(4)</a> we finally have:</p>
@@ -199,27 +200,50 @@ descritized uniformly as:</p>
 <span class="eqno">(5)<a class="headerlink" href="#equation-adv-1d-dis" title="Permalink to this equation">¶</a></span>\[u_{i}^{n+1}=u_{i}^{n}+ \frac{ \Delta t}{2 \Delta x} \Big(u_{i-1}^{n}-u_{i+1}^{n}\Big)\]</div>
 <div class="section" id="stability-and-accuracy">
 <h4>Stability And Accuracy<a class="headerlink" href="#stability-and-accuracy" title="Permalink to this headline">¶</a></h4>
-<p>Practically this method is not usefull since using von Neumann Stability Analysis, FTCS method is unconditionally unstable.</p>
+<p>Let assume that solution of equation <a class="reference internal" href="#equation-adv-1d">(1)</a> is periodic in the defined domain. Lets consider <span class="math notranslate nohighlight">\(\psi(x,t)\)</span> is the solution of
+equation <a class="reference internal" href="#equation-adv-1d">(1)</a>. Since this equation is a linear PDE, solution of this PDE is a sum of Fourier modes:</p>
+<div class="math notranslate nohighlight" id="equation-for-mod">
+<span class="eqno">(6)<a class="headerlink" href="#equation-for-mod" title="Permalink to this equation">¶</a></span>\[\psi(x,t) = \sum_{k=-\infty}^{\infty} a_k e^{ikx}\]</div>
+<p>where <span class="math notranslate nohighlight">\(k\)</span> is the wave number. Now let us study the stability of solution considering an individual wave number. Let us discretize
+our space and time domain to <span class="math notranslate nohighlight">\(x_{j}=j\Delta x\)</span> and <span class="math notranslate nohighlight">\(t_{n}=n\Delta t\)</span>, for <span class="math notranslate nohighlight">\((j,n=0,1,...)\)</span>, then the solution at <span class="math notranslate nohighlight">\(x_j\)</span> at
+time <span class="math notranslate nohighlight">\(t_n\)</span> is <span class="math notranslate nohighlight">\(\psi(x_j,t_n)\)</span>. We can see how the solution is amplified (or damped) by considering analytical
+amplification factor <span class="math notranslate nohighlight">\(A_a\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-a-a">
+<span class="eqno">(7)<a class="headerlink" href="#equation-a-a" title="Permalink to this equation">¶</a></span>\[\psi(x,t_{n+1})= A_a \psi(x,t_{n})\]</div>
+<p>Using this and discretization of the spatial domain and considering the solution of one wave number, we have</p>
+<div class="math notranslate nohighlight" id="equation-wave">
+<span class="eqno">(8)<a class="headerlink" href="#equation-wave" title="Permalink to this equation">¶</a></span>\[\psi_{j}^{n}=\psi(x_j,t_n) = A_a^n e^{ik x_j} = A_a^n e^{i \Delta x}\]</div>
+<p>Using the same idea for numerical scheme, we can also consider numerical amplification factor <span class="math notranslate nohighlight">\(A\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-wave-n">
+<span class="eqno">(9)<a class="headerlink" href="#equation-wave-n" title="Permalink to this equation">¶</a></span>\[\Psi_{j}^{n}=\Psi(x_j,t_n) = A^n e^{ik x_j} = A^n e^{i \Delta x}\]</div>
+<p>where here <span class="math notranslate nohighlight">\(\Psi\)</span> is our aproximated solution using a linear numerical scheme. Now we can use this equation in our numerical scheme and analyse its stability. Using equation <a class="reference internal" href="#equation-wave">(8)</a> in equation <a class="reference internal" href="#equation-adv-1d-dis">(5)</a> we have</p>
+<div class="math notranslate nohighlight" id="equation-ftcs-a">
+<span class="eqno">(10)<a class="headerlink" href="#equation-ftcs-a" title="Permalink to this equation">¶</a></span>\[A= 1 - i \frac{ \Delta t}{ \Delta x} sin(k \Delta x)\]</div>
+<p>In order that our numerical method to be stable, <span class="math notranslate nohighlight">\(|A|\)</span> should be less than 1. Calculating <span class="math notranslate nohighlight">\(|A|\)</span> we have</p>
+<div class="math notranslate nohighlight" id="equation-ftcs-a2">
+<span class="eqno">(11)<a class="headerlink" href="#equation-ftcs-a2" title="Permalink to this equation">¶</a></span>\[|A|^2 = 1 + ( \frac{ \Delta t}{ \Delta x} sin(k \Delta x) )^2\]</div>
+<p>The above equation can never be able to be less than 1. Practically this method is not usefull since using von Neumann Stability Analysis,
+FTCS method is unconditionally unstable.</p>
 </div>
 </div>
-<div class="section" id="upwind-methods">
-<h3>Upwind Methods<a class="headerlink" href="#upwind-methods" title="Permalink to this headline">¶</a></h3>
-<p>Upwind methods refers to those methods that the spatial differences are skewed in the flow direction. The simplest upwind method is the discribed by
-backward (<span class="math notranslate nohighlight">\(c &gt; 0\)</span>) or forward (<span class="math notranslate nohighlight">\(c &lt; 0\)</span>) spatial difference and the temporal forward Euler methods. As it is mentioned, the choice between the two spatial methods are dictated by the
+<div class="section" id="upwind-and-downwind-methods">
+<h3>Upwind and Downwind Methods<a class="headerlink" href="#upwind-and-downwind-methods" title="Permalink to this headline">¶</a></h3>
+<p>Upwind and downwind methods refer to those methods that the spatial differences are skewed in the flow direction. The simplest upwind and downwind methods are the discribed by
+backward (<span class="math notranslate nohighlight">\(c &gt; 0\)</span>) or forward (<span class="math notranslate nohighlight">\(c &lt; 0\)</span>) spatial difference and the temporal forward Euler methods, respectively. As it is mentioned, the choice between the two spatial methods are dictated by the
 sign of <span class="math notranslate nohighlight">\(c\)</span>, meaning the flow direction. Using the descritization methods described above we get:</p>
 <div class="math notranslate nohighlight" id="equation-adv-1d-upwind1">
-<span class="eqno">(6)<a class="headerlink" href="#equation-adv-1d-upwind1" title="Permalink to this equation">¶</a></span>\[\frac{u_{i}^{n+1}-u_{i}^{n}}{\Delta t} + \gamma_{min} \Big(\frac{u_{i+1}^{n}-u_{i}^{n}}{ \Delta x} \Big)+ \gamma_{max} \Big(\frac{u_{i}^{n}-u_{i-1}^{n}}{ \Delta x} \Big) = 0\]</div>
-<p>where <span class="math notranslate nohighlight">\(\gamma_{min}:=min(a,0)\)</span> and <span class="math notranslate nohighlight">\(\gamma_{max}:=max(a,0)\)</span>. Rearranging equation <a class="reference internal" href="#equation-adv-1d-upwind1">(6)</a> we have:</p>
+<span class="eqno">(12)<a class="headerlink" href="#equation-adv-1d-upwind1" title="Permalink to this equation">¶</a></span>\[\frac{u_{i}^{n+1}-u_{i}^{n}}{\Delta t} + \gamma_{min} \Big(\frac{u_{i+1}^{n}-u_{i}^{n}}{ \Delta x} \Big)+ \gamma_{max} \Big(\frac{u_{i}^{n}-u_{i-1}^{n}}{ \Delta x} \Big) = 0\]</div>
+<p>where <span class="math notranslate nohighlight">\(\gamma_{min}:=min(a,0)\)</span> and <span class="math notranslate nohighlight">\(\gamma_{max}:=max(a,0)\)</span>. Rearranging equation <a class="reference internal" href="#equation-adv-1d-upwind1">(12)</a> we have:</p>
 <div class="math notranslate nohighlight" id="equation-adv-1d-upwind">
-<span class="eqno">(7)<a class="headerlink" href="#equation-adv-1d-upwind" title="Permalink to this equation">¶</a></span>\[u_{i}^{n+1}= \alpha_{max} u_{i-1}^{n}+(1+\alpha_{min}-\alpha_{max})u_{i}^{n} -\alpha_{min}u_{i+1}^{n}\]</div>
-<p>where <span class="math notranslate nohighlight">\(\alpha_{min}:=\frac{\gamma_{min} \Delta t}{\Delta x}\)</span> and <span class="math notranslate nohighlight">\(\alpha_{max}:=\frac{\gamma_{max} \Delta t}{\Delta x}\)</span>. Considering the solution is periodic, we can rewrite equation  <a class="reference internal" href="#equation-adv-1d-upwind">(7)</a>
+<span class="eqno">(13)<a class="headerlink" href="#equation-adv-1d-upwind" title="Permalink to this equation">¶</a></span>\[u_{i}^{n+1}= \alpha_{max} u_{i-1}^{n}+(1+\alpha_{min}-\alpha_{max})u_{i}^{n} -\alpha_{min}u_{i+1}^{n}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha_{min}:=\frac{\gamma_{min} \Delta t}{\Delta x}\)</span> and <span class="math notranslate nohighlight">\(\alpha_{max}:=\frac{\gamma_{max} \Delta t}{\Delta x}\)</span>. Considering the solution is periodic, we can rewrite equation  <a class="reference internal" href="#equation-adv-1d-upwind">(13)</a>
 in its matrix form:</p>
 <div class="math notranslate nohighlight" id="equation-mat-eq">
-<span class="eqno">(8)<a class="headerlink" href="#equation-mat-eq" title="Permalink to this equation">¶</a></span>\[\mathbf{U}^{n+1}= \mathbf{A}^{n+1}\mathbf{U}^{n}\]</div>
+<span class="eqno">(14)<a class="headerlink" href="#equation-mat-eq" title="Permalink to this equation">¶</a></span>\[\mathbf{U}^{n+1}= \mathbf{A}^{n+1}\mathbf{U}^{n}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\mathbf{U}^{n+1}=[u_{0}^{n+1},u_{1}^{n+1},...,u_{N-1}^{n+1},u_{N}^{n+1}]^{T}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{U}^{n}=[u_{0}^{n},u_{1}^{n},...,u_{N-1}^{n},u_{N}^{n}]^{T}\)</span> and
-matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equation <a class="reference internal" href="#equation-adv-1d-upwind">(7)</a> is:</p>
+matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equation <a class="reference internal" href="#equation-adv-1d-upwind">(13)</a> is:</p>
 <div class="math notranslate nohighlight" id="equation-matrixa">
-<span class="eqno">(9)<a class="headerlink" href="#equation-matrixa" title="Permalink to this equation">¶</a></span>\[\begin{split} \small\mathbf{A}=\small\begin{bmatrix}
+<span class="eqno">(15)<a class="headerlink" href="#equation-matrixa" title="Permalink to this equation">¶</a></span>\[\begin{split} \small\mathbf{A}=\small\begin{bmatrix}
  (1+\alpha_{min}-\alpha_{max}) &amp; -\alpha_{min} &amp; 0 &amp; 0 &amp; 0&amp; ... &amp; \alpha_{max} \\
  \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max}) &amp; -\alpha_{min}&amp; 0 &amp; 0 &amp;... &amp; 0 \\
  0 &amp; \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max}) &amp; -\alpha_{min}&amp; 0 &amp;... &amp; 0 \\
@@ -228,11 +252,27 @@ matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equ
  0 &amp;0 &amp;... &amp; 0 &amp; \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max}) &amp;  -\alpha_{min}  \\
  -\alpha_{min} &amp;0 &amp;... &amp; 0 &amp; 0&amp;  \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max})  \\
  \end{bmatrix}_{(N+1)\times(N+1)}\end{split}\]</div>
+<p>As we mentioned above, if (<span class="math notranslate nohighlight">\(c &gt; 0\)</span>) we refer the discretization methods above as upwind and  if (<span class="math notranslate nohighlight">\(c &lt; 0\)</span>) as downwind.</p>
 <div class="section" id="id1">
 <h4>Stability And Accuracy<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
-<p>The above upwind method is first order accurate in both space. Using von Neumann Stability Analysis, this method is conditionally stable. The condition is:</p>
+<p>Using the same idea from previous section, we calculate the <span class="math notranslate nohighlight">\(A\)</span> for upwind method:</p>
+<div class="math notranslate nohighlight" id="equation-upwind-aup">
+<span class="eqno">(16)<a class="headerlink" href="#equation-upwind-aup" title="Permalink to this equation">¶</a></span>\[A = (1-C)+C e^{-i k \Delta x}\]</div>
+<p>where <span class="math notranslate nohighlight">\(C=\frac{c \Delta t}{\Delta x}\)</span>. Now calculating its norm, we have:</p>
+<div class="math notranslate nohighlight" id="equation-upwind-a">
+<span class="eqno">(17)<a class="headerlink" href="#equation-upwind-a" title="Permalink to this equation">¶</a></span>\[|A|^2 = 1 - 2 C (1-C)(1-cos(k \Delta x))\]</div>
+<p>If this method is stable, then <span class="math notranslate nohighlight">\(|A| \leq 1\)</span>. Then we have,</p>
+<div class="math notranslate nohighlight" id="equation-upwind-a2">
+<span class="eqno">(18)<a class="headerlink" href="#equation-upwind-a2" title="Permalink to this equation">¶</a></span>\[1 - 2 C (1-C)(1-cos(k \Delta x)) \leq 1  \to 0 \le C (1-C)(sin^2 (k \Delta x / 2))\]</div>
+<p>which leads to</p>
 <div class="math notranslate nohighlight" id="equation-cfl-cond">
-<span class="eqno">(10)<a class="headerlink" href="#equation-cfl-cond" title="Permalink to this equation">¶</a></span>\[CFL= |\frac{c \Delta t}{\Delta x}| \le 1\]</div>
+<span class="eqno">(19)<a class="headerlink" href="#equation-cfl-cond" title="Permalink to this equation">¶</a></span>\[C= \frac{c \Delta t}{\Delta x} \le 1\]</div>
+<p>Thus this method is conditionally stable. Using the same analogy, for the downwind method we have</p>
+<div class="math notranslate nohighlight" id="equation-dwind-a">
+<span class="eqno">(20)<a class="headerlink" href="#equation-dwind-a" title="Permalink to this equation">¶</a></span>\[|A|^2 = 1 - 2 C (1+C)(1-cos(k \Delta x))\]</div>
+<p>and if the method is stable, then <span class="math notranslate nohighlight">\(|A| \leq 1\)</span> leading to</p>
+<div class="math notranslate nohighlight" id="equation-cfl-cond-dw">
+<span class="eqno">(21)<a class="headerlink" href="#equation-cfl-cond-dw" title="Permalink to this equation">¶</a></span>\[C= \frac{c \Delta t}{\Delta x} \geq -1\]</div>
 </div>
 <div class="section" id="python-code">
 <h4>Python Code<a class="headerlink" href="#python-code" title="Permalink to this headline">¶</a></h4>
@@ -496,47 +536,79 @@ matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equ
 <div class="section" id="modified-equation">
 <h4>Modified Equation<a class="headerlink" href="#modified-equation" title="Permalink to this headline">¶</a></h4>
 <p>Modified equation first was introduced by Warming et al. which is a powerful tool of analysis the truncation error of time-dependent linear PDEs.
-In particular, the effect of diffusion or dispersion of the error terms can be studied using modified equation. Considering equation <a class="reference internal" href="#equation-adv-1d-upwind">(7)</a>, the
+In particular, the effect of diffusion or dispersion of the error terms can be studied using modified equation. Considering equation <a class="reference internal" href="#equation-adv-1d-upwind">(13)</a>, the
 modified equation refers to the following formal equation:</p>
 <div class="math notranslate nohighlight" id="equation-modif-upwind">
-<span class="eqno">(11)<a class="headerlink" href="#equation-modif-upwind" title="Permalink to this equation">¶</a></span>\[v(x,t+\Delta t) = \alpha_{max} v(x-\Delta x,t) + (1+\alpha_{min}-\alpha_{max}) v(x,t) - \alpha_{min} v(x+\Delta x,t)\]</div>
+<span class="eqno">(22)<a class="headerlink" href="#equation-modif-upwind" title="Permalink to this equation">¶</a></span>\[v(x,t+\Delta t) = \alpha_{max} v(x-\Delta x,t) + (1+\alpha_{min}-\alpha_{max}) v(x,t) - \alpha_{min} v(x+\Delta x,t)\]</div>
 <p>Assuming <span class="math notranslate nohighlight">\(v\)</span> is <span class="math notranslate nohighlight">\(C^{\infty}\)</span>, one can use taylor expansion of all terms in the above equation and deduce the folloing:</p>
 <div class="math notranslate nohighlight" id="equation-modif-upwind1">
-<span class="eqno">(12)<a class="headerlink" href="#equation-modif-upwind1" title="Permalink to this equation">¶</a></span>\[v_{t} +\Delta t v_{tt} +O(\Delta t^2)= -(\gamma_{max}+\gamma_{min}) v_x + \frac{\Delta x}{2}(\gamma_{max}-\gamma_{min}) v_{xx} - \frac{\Delta^{2} x}{6}(\gamma_{max}+\gamma_{min}) v_{xxx} +O(\Delta x^3)\]</div>
+<span class="eqno">(23)<a class="headerlink" href="#equation-modif-upwind1" title="Permalink to this equation">¶</a></span>\[v_{t} +\Delta t v_{tt} +O(\Delta t^2)= -(\gamma_{max}+\gamma_{min}) v_x + \frac{\Delta x}{2}(\gamma_{max}-\gamma_{min}) v_{xx} - \frac{\Delta^{2} x}{6}(\gamma_{max}+\gamma_{min}) v_{xxx} +O(\Delta x^3)\]</div>
 <p>using <span class="math notranslate nohighlight">\(\gamma_{max}+\gamma_{min}= c\)</span> and <span class="math notranslate nohighlight">\(\gamma_{max}-\gamma_{min}= sign(c)c=|c|\)</span> we have:</p>
 <div class="math notranslate nohighlight" id="equation-modif-upwind2">
-<span class="eqno">(13)<a class="headerlink" href="#equation-modif-upwind2" title="Permalink to this equation">¶</a></span>\[v_{t}+ c v_x  =-\Delta t v_{tt} + \Big(\frac{\Delta x}{2} |c|\Big)v_{xx} - \Big(\frac{\Delta^{2} x}{6}c\Big) v_{xxx} +O(\Delta^2 t,\Delta^3 x)\]</div>
-<p>taking the partial derivative of equation <a class="reference internal" href="#equation-modif-upwind2">(13)</a> with respect <span class="math notranslate nohighlight">\(t\)</span> and <span class="math notranslate nohighlight">\(x\)</span> we have:</p>
+<span class="eqno">(24)<a class="headerlink" href="#equation-modif-upwind2" title="Permalink to this equation">¶</a></span>\[v_{t}+ c v_x  =-\Delta t v_{tt} + \Big(\frac{\Delta x}{2} |c|\Big)v_{xx} - \Big(\frac{\Delta^{2} x}{6}c\Big) v_{xxx} +O(\Delta^2 t,\Delta^3 x)\]</div>
+<p>taking the partial derivative of equation <a class="reference internal" href="#equation-modif-upwind2">(24)</a> with respect <span class="math notranslate nohighlight">\(t\)</span> and <span class="math notranslate nohighlight">\(x\)</span> we have:</p>
 <div class="math notranslate nohighlight" id="equation-modif-upwind3">
-<span class="eqno">(14)<a class="headerlink" href="#equation-modif-upwind3" title="Permalink to this equation">¶</a></span>\[v_{tt}+ c v_{xt}  =-\Delta t v_{ttt} + \Big(\frac{\Delta x}{2} |c|\Big)v_{xxt} - \Big(\frac{\Delta^{2} x}{6}c\Big) v_{xxxt} +O(\Delta^2 t,\Delta^3 x)\]</div>
+<span class="eqno">(25)<a class="headerlink" href="#equation-modif-upwind3" title="Permalink to this equation">¶</a></span>\[v_{tt}+ c v_{xt}  =-\Delta t v_{ttt} + \Big(\frac{\Delta x}{2} |c|\Big)v_{xxt} - \Big(\frac{\Delta^{2} x}{6}c\Big) v_{xxxt} +O(\Delta^2 t,\Delta^3 x)\]</div>
 <div class="math notranslate nohighlight" id="equation-modif-upwind4">
-<span class="eqno">(15)<a class="headerlink" href="#equation-modif-upwind4" title="Permalink to this equation">¶</a></span>\[v_{tx}+ c v_{xx}  =-\Delta t v_{ttx} + \Big(\frac{\Delta x}{2} |c|\Big)v_{xxx} - \Big(\frac{\Delta^{2} x}{6}c\Big) v_{xxxx} +O(\Delta^2 t,\Delta^3 x)\]</div>
-<p>If we multiply equation <a class="reference internal" href="#equation-modif-upwind4">(15)</a>  by <span class="math notranslate nohighlight">\(-c\)</span> and sum it with equation <a class="reference internal" href="#equation-modif-upwind3">(14)</a> we get:</p>
+<span class="eqno">(26)<a class="headerlink" href="#equation-modif-upwind4" title="Permalink to this equation">¶</a></span>\[v_{tx}+ c v_{xx}  =-\Delta t v_{ttx} + \Big(\frac{\Delta x}{2} |c|\Big)v_{xxx} - \Big(\frac{\Delta^{2} x}{6}c\Big) v_{xxxx} +O(\Delta^2 t,\Delta^3 x)\]</div>
+<p>If we multiply equation <a class="reference internal" href="#equation-modif-upwind4">(26)</a>  by <span class="math notranslate nohighlight">\(-c\)</span> and sum it with equation <a class="reference internal" href="#equation-modif-upwind3">(25)</a> we get:</p>
 <div class="math notranslate nohighlight" id="equation-modif-upwind5">
-<span class="eqno">(16)<a class="headerlink" href="#equation-modif-upwind5" title="Permalink to this equation">¶</a></span>\[v_{tt} =c^2 v_{xx}+\Delta t\Big(c v_{ttx} -t v_{ttt}\Big) + \Delta x \Big(\frac{|c|}{2} v_{xxt}  - c \frac{|c|}{2} v_{xxx} \Big) - \Delta^2 x \Big(\frac{c }{6} v_{xxxt} +\frac{c^{2} }{6}  v_{xxxx}\Big) +O(\Delta^2 t,\Delta^3 x)\]</div>
-<p>Substituting equation <a class="reference internal" href="#equation-modif-upwind5">(16)</a> to equation <a class="reference internal" href="#equation-modif-upwind2">(13)</a> we have:</p>
+<span class="eqno">(27)<a class="headerlink" href="#equation-modif-upwind5" title="Permalink to this equation">¶</a></span>\[v_{tt} =c^2 v_{xx}+\Delta t\Big(c v_{ttx} -t v_{ttt}\Big) + \Delta x \Big(\frac{|c|}{2} v_{xxt}  - c \frac{|c|}{2} v_{xxx} \Big) - \Delta^2 x \Big(\frac{c }{6} v_{xxxt} +\frac{c^{2} }{6}  v_{xxxx}\Big) +O(\Delta^2 t,\Delta^3 x)\]</div>
+<p>Substituting equation <a class="reference internal" href="#equation-modif-upwind5">(27)</a> to equation <a class="reference internal" href="#equation-modif-upwind2">(24)</a> we have:</p>
 <div class="math notranslate nohighlight" id="equation-modif-upwind-f">
-<span class="eqno">(17)<a class="headerlink" href="#equation-modif-upwind-f" title="Permalink to this equation">¶</a></span>\[v_{t}+ c v_x  = \frac{c \Delta x}{2} \Big(Sign(c) - \frac{c \Delta t}{\Delta x}  \Big)v_{xx} +O(\Delta^2 t,\Delta^3 x)\]</div>
-<p>Formally, <a class="reference internal" href="#equation-modif-upwind-f">(17)</a> is the PDE which actually solved by upwind method. As can be seen, the first term in the right hand side creates artificial diffusion for equation <a class="reference internal" href="#equation-adv-1d">(1)</a>
+<span class="eqno">(28)<a class="headerlink" href="#equation-modif-upwind-f" title="Permalink to this equation">¶</a></span>\[v_{t}+ c v_x  = \frac{c \Delta x}{2} \Big(Sign(c) - \frac{c \Delta t}{\Delta x}  \Big)v_{xx} +O(\Delta^2 t,\Delta^3 x)\]</div>
+<p>Formally, <a class="reference internal" href="#equation-modif-upwind-f">(28)</a> is the PDE which actually solved by upwind method. As can be seen, the first term in the right hand side creates artificial diffusion for equation <a class="reference internal" href="#equation-adv-1d">(1)</a>
 when solved numerically using upwind method. This shows that the upwind method creates numerical diffusion as wave propagates during time.
-This equation also shows that the method is first order accurate. As we mentioned in equation <a class="reference internal" href="#equation-cfl-cond">(10)</a>, upwind method is stable if <span class="math notranslate nohighlight">\(|\frac{c \Delta t}{\Delta x}| \le 1\)</span>. This means that
-the diffusion coefficient in equation <a class="reference internal" href="#equation-modif-upwind-f">(17)</a> <span class="math notranslate nohighlight">\(\frac{c \Delta x}{2} \Big(Sign(c) - \frac{c \Delta t}{\Delta x}\Big)\)</span> is positive.</p>
+This equation also shows that the method is first order accurate. As we mentioned in equation <a class="reference internal" href="#equation-cfl-cond">(19)</a>, upwind method is stable if <span class="math notranslate nohighlight">\(|\frac{c \Delta t}{\Delta x}| \le 1\)</span>. This means that
+the diffusion coefficient in equation <a class="reference internal" href="#equation-modif-upwind-f">(28)</a> <span class="math notranslate nohighlight">\(\frac{c \Delta x}{2} \Big(Sign(c) - \frac{c \Delta t}{\Delta x}\Big)\)</span> is positive.</p>
 </div>
 <div class="section" id="error-due-to-diffusion-and-dispersion">
 <h4>Error due to Diffusion and Dispersion<a class="headerlink" href="#error-due-to-diffusion-and-dispersion" title="Permalink to this headline">¶</a></h4>
-<p>Consider a periodic domain of <span class="math notranslate nohighlight">\([0,\pi]\)</span> for <a class="reference internal" href="#equation-adv-1d">(1)</a> and suppose that <span class="math notranslate nohighlight">\(\Delta x= 2\pi /N\)</span>.
-Since equation <a class="reference internal" href="#equation-adv-1d">(1)</a> is linear and defined in a periodic boundary condition and its corresponding discretization upwind method is also linear,
-any solution of equation is a finite combination of Fourier modes</p>
-<div class="math notranslate nohighlight" id="equation-fourmod">
-<span class="eqno">(18)<a class="headerlink" href="#equation-fourmod" title="Permalink to this equation">¶</a></span>\[\psi_{j} = \frac{1}{N} \sum_{k=0}^{N-1} a_k e^{ikj\Delta x}\]</div>
-<p>Now assume wave-like solution of</p>
-<div class="math notranslate nohighlight" id="equation-wave">
-<span class="eqno">(19)<a class="headerlink" href="#equation-wave" title="Permalink to this equation">¶</a></span>\[\psi(x,t) = \psi_0 e^{i(kx-\omega t)}\]</div>
-<p>substituting equation <a class="reference internal" href="#equation-wave">(19)</a> to <a class="reference internal" href="#equation-adv-1d">(1)</a>, we get <span class="math notranslate nohighlight">\(\omega (k)=ck\)</span> which corresponds to the relation between each wave frequency and its wavenumber <span class="math notranslate nohighlight">\(k\)</span>. In general this relation is called dispersion.
+<p>Similar to von-Neumann stablity analysis, assume a wave-like solution of</p>
+<div class="math notranslate nohighlight" id="equation-wave-ds">
+<span class="eqno">(29)<a class="headerlink" href="#equation-wave-ds" title="Permalink to this equation">¶</a></span>\[\psi(x,t) = e^{i(kx-\omega t)} = e^{-i \phi_a}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\phi_a\)</span> is the wave phase. Substituting equation <a class="reference internal" href="#equation-wave-ds">(29)</a> to <a class="reference internal" href="#equation-adv-1d">(1)</a>, we get <span class="math notranslate nohighlight">\(\omega (k)=ck\)</span> which corresponds to the relation between each
+wave frequency and its wavenumber <span class="math notranslate nohighlight">\(k\)</span>. In general this relation is called dispersion.
 if we use discretization of <span class="math notranslate nohighlight">\(x_{j}=j\Delta x\)</span> and <span class="math notranslate nohighlight">\(t_{n}=n\Delta t\)</span>, for <span class="math notranslate nohighlight">\((j,n=0,1,...)\)</span>, then the solution at  <span class="math notranslate nohighlight">\(x_j\)</span> at time <span class="math notranslate nohighlight">\(t_n\)</span>
-is <span class="math notranslate nohighlight">\(u(x_j,t_n)\)</span>. We can see how the solution is amplified (or damped) by considering analytical amplificaiton factor:</p>
-<div class="math notranslate nohighlight" id="equation-a-a">
-<span class="eqno">(20)<a class="headerlink" href="#equation-a-a" title="Permalink to this equation">¶</a></span>\[A_a =\frac{u(x_j,t_{n+1})}{u(x_j,t_{n})}=e^{-i\omega \Delta t}\]</div>
+is <span class="math notranslate nohighlight">\(\psi(x_j,t_n)\)</span>. We can now consider the analytical amplification factor:</p>
+<div class="math notranslate nohighlight" id="equation-a-a-n">
+<span class="eqno">(30)<a class="headerlink" href="#equation-a-a-n" title="Permalink to this equation">¶</a></span>\[A_a =\frac{\psi(x_j,t_{n+1})}{\psi(x_j,t_{n})}=e^{-i\omega \Delta t}\]</div>
+<p>Then wave phase also can be calculate using <span class="math notranslate nohighlight">\(\omega (k)=ck\)</span> we have:</p>
+<div class="math notranslate nohighlight" id="equation-phi-a">
+<span class="eqno">(31)<a class="headerlink" href="#equation-phi-a" title="Permalink to this equation">¶</a></span>\[\phi_a = \omega \Delta t = c k \Delta t= CFL \times k \Delta x\]</div>
+<p>Using equations <a class="reference internal" href="#equation-a-a-n">(30)</a> and <a class="reference internal" href="#equation-wave-ds">(29)</a>, one can show that:</p>
+<div class="math notranslate nohighlight" id="equation-wave-disc">
+<span class="eqno">(32)<a class="headerlink" href="#equation-wave-disc" title="Permalink to this equation">¶</a></span>\[\psi(x_j,t_n) = \psi_0 e^{i(kx-\omega t)} = \psi_0 A_a^n e^{i k x_j}\]</div>
+<p>Since <span class="math notranslate nohighlight">\(\omega (k)=ck\)</span> for linear advection equation, we can calculate the phase and group velocity, namely:</p>
+<div class="math notranslate nohighlight" id="equation-phase-v-ex">
+<span class="eqno">(33)<a class="headerlink" href="#equation-phase-v-ex" title="Permalink to this equation">¶</a></span>\[V_p =\frac{\omega}{k}=\frac{ck}{k}=c\]</div>
+<div class="math notranslate nohighlight" id="equation-group-v-ex">
+<span class="eqno">(34)<a class="headerlink" href="#equation-group-v-ex" title="Permalink to this equation">¶</a></span>\[V_g =\frac{\partial \omega}{\partial k}=c\]</div>
+<p>This shows that the phase and group velocity are the same, meaning that the wave is non-dispersive.</p>
+<p>Now consider the upwind method and using the same termiology of equations <a class="reference internal" href="#equation-wave-disc">(32)</a> and <a class="reference internal" href="#equation-a-a-n">(30)</a>, we have:</p>
+<div class="math notranslate nohighlight" id="equation-wave-disc-upw">
+<span class="eqno">(35)<a class="headerlink" href="#equation-wave-disc-upw" title="Permalink to this equation">¶</a></span>\[\Psi(x_j,t_n) = \Psi_0 A^n e^{i k x_j}\]</div>
+<p>where <span class="math notranslate nohighlight">\(A\)</span> is the numerical amplification factor and is defined as:</p>
+<div class="math notranslate nohighlight" id="equation-a">
+<span class="eqno">(36)<a class="headerlink" href="#equation-a" title="Permalink to this equation">¶</a></span>\[A = \frac{\Psi_j^{n+1}}{\Psi_j^{n}}\]</div>
+<p>Note that <span class="math notranslate nohighlight">\(A_a\)</span> is derived from the analytical solution of the PDE and that <span class="math notranslate nohighlight">\(A\)</span> is derived from
+numerical approximation of the same PDE, which might not be in perfect agreement.
+As we seen before, in the von-Neumann analysis of upwind method, <span class="math notranslate nohighlight">\(A\)</span>  was calculated in equation <a class="reference internal" href="#equation-upwind-aup">(16)</a>. We can compare <span class="math notranslate nohighlight">\(A_a\)</span> and
+<span class="math notranslate nohighlight">\(A\)</span> by considering the ratio their norm:</p>
+<div class="math notranslate nohighlight" id="equation-difer">
+<span class="eqno">(37)<a class="headerlink" href="#equation-difer" title="Permalink to this equation">¶</a></span>\[\epsilon_A = \frac{|A|}{|A_a|}= \sqrt{1-4C(1-C)sin^2(\frac{k \Delta x}{2} )}=\sqrt{1-4C(1-C)sin^2(\frac{\chi}{2} )}\]</div>
+<a class="reference internal image-reference" href="_images/ED.png"><img alt="alternate text" class="align-center" src="_images/ED.png" style="width: 500px; height: 400px;" /></a>
+<p>In the figure above we can see  for different values of <span class="math notranslate nohighlight">\(C\)</span>, how <span class="math notranslate nohighlight">\(\epsilon_A\)</span> changed as the frequency increases. As can be seen for <span class="math notranslate nohighlight">\(C=1\)</span>,
+both analytical and numerical amplification magnitude are the same and equal to 1. This is the case that numerical solution is the exact solution of the advection equation.
+However, as <span class="math notranslate nohighlight">\(C\)</span> decreases, for higher frequencies, <span class="math notranslate nohighlight">\(\epsilon_A\)</span> decreases dramatically, meaning that the numerical amplitude is smaller than the exact one.</p>
+<p>We can also do the same analysis for the phase which is associated to dispersion. Defining <span class="math notranslate nohighlight">\(\epsilon_\phi\)</span> as the ratio between the numerical and analytical phase,
+and using equation <a class="reference internal" href="#equation-upwind-aup">(16)</a>, we have</p>
+<div class="math notranslate nohighlight" id="equation-phier">
+<span class="eqno">(38)<a class="headerlink" href="#equation-phier" title="Permalink to this equation">¶</a></span>\[\epsilon_\phi = \frac{|\phi|}{|\phi_a|}= \frac{1}{C \chi} \frac{C sin(\chi)}{1-C (1-cos(\chi)}\]</div>
+<a class="reference internal image-reference" href="_images/EPHI.png"><img alt="alternate text" class="align-center" src="_images/EPHI.png" style="width: 500px; height: 400px;" /></a>
+<p>In the figure above we can see for different values of <span class="math notranslate nohighlight">\(C\)</span>, how <span class="math notranslate nohighlight">\(\epsilon_\phi\)</span> changed as the frequency increases. As can be seen, there is no dispersion error for <span class="math notranslate nohighlight">\(C=1\)</span>
+and <span class="math notranslate nohighlight">\(C=0.5\)</span>. for the values of <span class="math notranslate nohighlight">\(C&lt;0.5\)</span>, <span class="math notranslate nohighlight">\(\epsilon_\phi&lt;1\)</span> meaning that the numerical solution moves slower than the physical one. On the other hand for <span class="math notranslate nohighlight">\(C&gt;0.5\)</span>, this
+is vice versa.</p>
 </div>
 </div>
 </div>
