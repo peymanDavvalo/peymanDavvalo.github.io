@@ -470,7 +470,7 @@ Using the same idea from FTCS section, we calculate the :math:`A` for Lax-Wendro
    
 Now calculating its norm, one can show that we have:
 
-.. math:: |A|^2 = 1 - 4 C^2 (1-C^2)sin^2(\frac{\chi}{2})
+.. math:: |A|^2 = 1 - 4 C^2 (1-C^2)sin^4(\frac{\chi}{2})
    :label: Lax_A2 
 
 
@@ -536,5 +536,40 @@ For the explanaition of the code, please take a look at the youtube video.
    :height: 400px
    :alt: alternate text
    :align: center	
+
+Modified Equation
+^^^^^^^^^^^^^^^^^
+
+
+Similar to previous section, considering equation :eq:`lax-w`, the modified equation refers to the following formal equation:
+
+
+.. math::  v(x,t+\Delta t) = a_{-1} v(x-\Delta x,t) + a_{0} v(x,t) + a_{1}v(x+\Delta x,t)
+   :label: lax-w-modified1
    
+Similar to previous section one can write the taylor expansion of each term and replace the temporal term by spatial terms and end up with the following:
+
+
+.. math::  v_{t}= \frac{\Delta x}{6}(C^2 - 1) v_{xxx}+ O(\Delta^3 x,\Delta^3 t)
+   :label: lax-w-modified
+   
+This shows that lax-Wendroff is second order accurate in time and space. Note that there is no diffusion term and only dispersion term can be seen here. 
+   
+Error due to Diffusion and Dispersion 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Similar to previous section we can analysis the behavior of numerical solution by analysing :math:`\epsilon_A` and :math:`\epsilon_\phi`.
+As we seen before, in the von-Neumann analysis of upwind method, :math:`A`  was calculated in equation :eq:`Lax_AU`. Thus we can calculate :math:`\epsilon_A`:
+ 
+.. math:: \epsilon_A = \frac{|A|}{|A_a|}= \sqrt{1 - 4 C^2 (1-C^2)sin^4(\frac{\chi}{2})}
+   :label: difer2
+
+.. image:: images/ED-Lax-Wendroff.png
+   :width: 500px
+   :height: 400px
+   :alt: alternate text
+   :align: center	
+   
+As can be seen here,
+  
    

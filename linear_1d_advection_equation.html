@@ -105,6 +105,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#python-code-using-matrix-form">Python Code (Using Matrix form)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#matlab-code-using-matrix-form">Matlab Code (Using Matrix form)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#julia-code-using-matrix-form">Julia Code (Using Matrix form)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Modified Equation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Error due to Diffusion and Dispersion</a></li>
 </ul>
 </li>
 </ul>
@@ -820,7 +822,7 @@ For this reason we write the taylor expansion of <span class="math notranslate n
 <span class="eqno">(44)<a class="headerlink" href="#equation-lax-au" title="Permalink to this equation">¶</a></span>\[A = a_{0}+ a_{-1} e^{-ik \Delta x}+ a_{1} e^{ik \Delta x}\]</div>
 <p>Now calculating its norm, one can show that we have:</p>
 <div class="math notranslate nohighlight" id="equation-lax-a2">
-<span class="eqno">(45)<a class="headerlink" href="#equation-lax-a2" title="Permalink to this equation">¶</a></span>\[|A|^2 = 1 - 4 C^2 (1-C^2)sin^2(\frac{\chi}{2})\]</div>
+<span class="eqno">(45)<a class="headerlink" href="#equation-lax-a2" title="Permalink to this equation">¶</a></span>\[|A|^2 = 1 - 4 C^2 (1-C^2)sin^4(\frac{\chi}{2})\]</div>
 <p>Where <span class="math notranslate nohighlight">\(\chi=k \Delta x\)</span>. The method is stable if <span class="math notranslate nohighlight">\(|A| \leq 1\)</span> which leads to</p>
 <div class="math notranslate nohighlight" id="equation-cfl-cond-lax">
 <span class="eqno">(46)<a class="headerlink" href="#equation-cfl-cond-lax" title="Permalink to this equation">¶</a></span>\[|\frac{c \Delta t}{\Delta x}| \leq 1\]</div>
@@ -919,6 +921,25 @@ For this reason we write the taylor expansion of <span class="math notranslate n
 </div>
 <p>For the explanaition of the code, please take a look at the youtube video.</p>
 <a class="reference internal image-reference" href="_images/LA1D_laxWendroff_Julia.png"><img alt="alternate text" class="align-center" src="_images/LA1D_laxWendroff_Julia.png" style="width: 500px; height: 400px;" /></a>
+</div>
+<div class="section" id="id3">
+<h4>Modified Equation<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<p>Similar to previous section, considering equation <a class="reference internal" href="#equation-lax-w">(42)</a>, the modified equation refers to the following formal equation:</p>
+<div class="math notranslate nohighlight" id="equation-lax-w-modified1">
+<span class="eqno">(47)<a class="headerlink" href="#equation-lax-w-modified1" title="Permalink to this equation">¶</a></span>\[v(x,t+\Delta t) = a_{-1} v(x-\Delta x,t) + a_{0} v(x,t) + a_{1}v(x+\Delta x,t)\]</div>
+<p>Similar to previous section one can write the taylor expansion of each term and replace the temporal term by spatial terms and end up with the following:</p>
+<div class="math notranslate nohighlight" id="equation-lax-w-modified">
+<span class="eqno">(48)<a class="headerlink" href="#equation-lax-w-modified" title="Permalink to this equation">¶</a></span>\[v_{t}= \frac{\Delta x}{6}(C^2 - 1) v_{xxx}+ O(\Delta^3 x,\Delta^3 t)\]</div>
+<p>This shows that lax-Wendroff is second order accurate in time and space. Note that there is no diffusion term and only dispersion term can be seen here.</p>
+</div>
+<div class="section" id="id4">
+<h4>Error due to Diffusion and Dispersion<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<p>Similar to previous section we can analysis the behavior of numerical solution by analysing <span class="math notranslate nohighlight">\(\epsilon_A\)</span> and <span class="math notranslate nohighlight">\(\epsilon_\phi\)</span>.
+As we seen before, in the von-Neumann analysis of upwind method, <span class="math notranslate nohighlight">\(A\)</span>  was calculated in equation <a class="reference internal" href="#equation-lax-au">(44)</a>. Thus we can calculate <span class="math notranslate nohighlight">\(\epsilon_A\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-difer2">
+<span class="eqno">(49)<a class="headerlink" href="#equation-difer2" title="Permalink to this equation">¶</a></span>\[\epsilon_A = \frac{|A|}{|A_a|}= \sqrt{1 - 4 C^2 (1-C^2)sin^4(\frac{\chi}{2})}\]</div>
+<a class="reference internal image-reference" href="_images/ED-Lax-Wendroff.png"><img alt="alternate text" class="align-center" src="_images/ED-Lax-Wendroff.png" style="width: 500px; height: 400px;" /></a>
+<p>As can be seen here,</p>
 </div>
 </div>
 </div>
