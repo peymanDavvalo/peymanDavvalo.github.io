@@ -100,6 +100,13 @@
 <li class="toctree-l4"><a class="reference internal" href="#julia-code-using-mol">Julia Code (Using MOL)</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#lax-wendroff-method">Lax-Wendroff Method</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Stability And Accuracy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#python-code-using-matrix-form">Python Code (Using Matrix form)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#matlab-code-using-matrix-form">Matlab Code (Using Matrix form)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#julia-code-using-matrix-form">Julia Code (Using Matrix form)</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -226,7 +233,7 @@ amplification factor <span class="math notranslate nohighlight">\(A_a\)</span>:<
 <p>In order that our numerical method to be stable, <span class="math notranslate nohighlight">\(|A|\)</span> should be less than 1. Calculating <span class="math notranslate nohighlight">\(|A|\)</span> we have</p>
 <div class="math notranslate nohighlight" id="equation-ftcs-a2">
 <span class="eqno">(11)<a class="headerlink" href="#equation-ftcs-a2" title="Permalink to this equation">¶</a></span>\[|A|^2 = 1 + ( \frac{ \Delta t}{ \Delta x} sin(k \Delta x) )^2\]</div>
-<p>The above equation can never be able to be less than 1. Practically this method is not usefull since using von Neumann Stability Analysis,
+<p>The above equation can never be able to be less that or equal to 1. Practically this method is not usefull since using von Neumann Stability Analysis,
 FTCS method is unconditionally unstable.</p>
 </div>
 </div>
@@ -255,7 +262,7 @@ matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equ
  0 &amp;0 &amp;... &amp; \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max}) &amp;  -\alpha_{min} &amp; 0 \\
  0 &amp;0 &amp;... &amp; 0 &amp; \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max}) &amp;  -\alpha_{min}  \\
  -\alpha_{min} &amp;0 &amp;... &amp; 0 &amp; 0&amp;  \alpha_{max} &amp; (1+\alpha_{min}-\alpha_{max})  \\
- \end{bmatrix}_{(N+1)\times(N+1)}\end{split}\]</div>
+ \end{bmatrix}_{N\times N }\end{split}\]</div>
 <p>As we mentioned above, if (<span class="math notranslate nohighlight">\(c &gt; 0\)</span>) we refer the discretization methods above as upwind and  if (<span class="math notranslate nohighlight">\(c &lt; 0\)</span>) as downwind.</p>
 <div class="section" id="id1">
 <h4>Stability And Accuracy<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
@@ -270,7 +277,7 @@ matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equ
 <span class="eqno">(18)<a class="headerlink" href="#equation-upwind-a2" title="Permalink to this equation">¶</a></span>\[1 - 2 C (1-C)(1-cos(k \Delta x)) \leq 1  \to 0 \le C (1-C)(sin^2 (k \Delta x / 2))\]</div>
 <p>which leads to</p>
 <div class="math notranslate nohighlight" id="equation-cfl-cond">
-<span class="eqno">(19)<a class="headerlink" href="#equation-cfl-cond" title="Permalink to this equation">¶</a></span>\[C= \frac{c \Delta t}{\Delta x} \le 1\]</div>
+<span class="eqno">(19)<a class="headerlink" href="#equation-cfl-cond" title="Permalink to this equation">¶</a></span>\[C= \frac{c \Delta t}{\Delta x} \leq 1\]</div>
 <p>Thus this method is conditionally stable. Using the same analogy, for the downwind method we have</p>
 <div class="math notranslate nohighlight" id="equation-dwind-a">
 <span class="eqno">(20)<a class="headerlink" href="#equation-dwind-a" title="Permalink to this equation">¶</a></span>\[|A|^2 = 1 - 2 C (1+C)(1-cos(k \Delta x))\]</div>
@@ -316,8 +323,8 @@ matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equ
        <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">a3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
        <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">alpha_max</span>
        <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">=-</span><span class="n">alpha_min</span>
-   <span class="c1"># Upwind solve</span>
-   <span class="k">def</span> <span class="nf">upwindSolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">u0</span><span class="p">):</span>
+   <span class="c1"># Solve u=Au0</span>
+   <span class="k">def</span> <span class="nf">Solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">u0</span><span class="p">):</span>
        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span><span class="n">u0</span><span class="p">)</span> 
 
 <span class="c1">#############  </span>
@@ -345,7 +352,7 @@ matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equ
     <span class="k">print</span><span class="p">(</span><span class="s2">&quot;CFL number is: &quot;</span><span class="p">,</span> <span class="n">LA1D</span><span class="o">.</span><span class="n">CFL</span><span class="p">())</span>
     <span class="n">LA1D</span><span class="o">.</span><span class="n">upwindMatrixAssembly</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">LA1D</span><span class="o">.</span><span class="n">T</span><span class="o">/</span><span class="n">LA1D</span><span class="o">.</span><span class="n">deltaT</span><span class="p">)):</span>
-        <span class="n">u</span><span class="o">=</span><span class="n">LA1D</span><span class="o">.</span><span class="n">upwindSolve</span><span class="p">(</span><span class="n">u0</span><span class="p">)</span>
+        <span class="n">u</span><span class="o">=</span><span class="n">LA1D</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="n">u0</span><span class="p">)</span>
         <span class="n">u0</span><span class="o">=</span><span class="n">u</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="k">print</span><span class="p">(</span><span class="s2">&quot;CFL number is greater than 1. CFL: &quot;</span><span class="p">,</span> <span class="n">LA1D</span><span class="o">.</span><span class="n">CFL</span><span class="p">())</span>
@@ -355,7 +362,7 @@ matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equ
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;dotted&#39;</span><span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;LA1D.png&#39;</span><span class="p">,</span><span class="n">dpi</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;LA1D.png&#39;</span><span class="p">,</span><span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
 
 <span class="k">print</span><span class="p">(</span><span class="n">deltaT</span><span class="o">/</span><span class="p">((</span><span class="n">xN</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span><span class="o">/</span><span class="n">N</span><span class="p">))</span>
 <span class="k">print</span><span class="p">(</span><span class="n">LA1D</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
@@ -363,7 +370,7 @@ matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equ
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="_images/LA1D_Python.png"><img alt="alternate text" class="align-center" src="_images/LA1D_Python.png" style="width: 500px; height: 400px;" /></a>
-<p>For the explanaition of the code, please take a look at the youtube vidoes.</p>
+<p>For the explanaition of the code, please take a look at the youtube video.</p>
 </div>
 <div class="section" id="matlab-code-matrix-form">
 <h4>Matlab Code (Matrix form)<a class="headerlink" href="#matlab-code-matrix-form" title="Permalink to this headline">¶</a></h4>
@@ -406,7 +413,7 @@ matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equ
            <span class="n">self</span><span class="p">.</span><span class="n">A</span><span class="p">(</span><span class="k">end</span><span class="p">,</span><span class="mi">1</span><span class="p">)=</span><span class="o">-</span><span class="n">alpha_min</span><span class="p">;</span>
         <span class="k">end</span>
         <span class="c">% Upwind solve</span>
-<span class="k">        function</span><span class="w"> </span>x <span class="p">=</span><span class="w"> </span><span class="nf">upwindSolve</span><span class="p">(</span>self,u0<span class="p">)</span><span class="w"></span>
+<span class="k">        function</span><span class="w"> </span>x <span class="p">=</span><span class="w"> </span><span class="nf">Solve</span><span class="p">(</span>self,u0<span class="p">)</span><span class="w"></span>
 <span class="w">            </span><span class="n">x</span><span class="p">=</span><span class="n">transpose</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">A</span><span class="o">*</span><span class="n">transpose</span><span class="p">(</span><span class="n">u0</span><span class="p">));</span>
         <span class="k">end</span>
     <span class="k">end</span>
@@ -451,7 +458,7 @@ matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equ
 <span class="n">grid</span> <span class="n">on</span>
 </pre></div>
 </div>
-<p>For the explanaition of the code, please take a look at the youtube vidoes.</p>
+<p>For the explanaition of the code, please take a look at the youtube video.</p>
 <a class="reference internal image-reference" href="_images/LA1D_Matlab.png"><img alt="alternate text" class="align-center" src="_images/LA1D_Matlab.png" style="width: 500px; height: 400px;" /></a>
 </div>
 <div class="section" id="julia-code-matrix-form">
@@ -534,7 +541,7 @@ matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equ
 <span class="n">PyPlot</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">linestyle</span><span class="o">=</span><span class="s">&quot;dotted&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>For the explanaition of the code, please take a look at the youtube vidoes.</p>
+<p>For the explanaition of the code, please take a look at the youtube video.</p>
 <a class="reference internal image-reference" href="_images/LA1D_Julia.png"><img alt="alternate text" class="align-center" src="_images/LA1D_Julia.png" style="width: 500px; height: 400px;" /></a>
 </div>
 <div class="section" id="modified-equation">
@@ -676,7 +683,7 @@ be used.</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;semi-LA1D_Python.png&#39;</span><span class="p">,</span><span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>For the explanaition of the code, please take a look at the youtube vidoes.</p>
+<p>For the explanaition of the code, please take a look at the youtube video.</p>
 <a class="reference internal image-reference" href="_images/semi-LA1D_Python.png"><img alt="alternate text" class="align-center" src="_images/semi-LA1D_Python.png" style="width: 500px; height: 400px;" /></a>
 </div>
 <div class="section" id="matlab-code-using-mol">
@@ -727,7 +734,7 @@ be used.</p>
 <span class="k">end</span>
 </pre></div>
 </div>
-<p>For the explanaition of the code, please take a look at the youtube vidoes.</p>
+<p>For the explanaition of the code, please take a look at the youtube video.</p>
 <a class="reference internal image-reference" href="_images/semi-LA1D_Matlab.png"><img alt="alternate text" class="align-center" src="_images/semi-LA1D_Matlab.png" style="width: 500px; height: 400px;" /></a>
 </div>
 <div class="section" id="julia-code-using-mol">
@@ -777,8 +784,141 @@ be used.</p>
 <span class="n">PyPlot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;u&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>For the explanaition of the code, please take a look at the youtube vidoes.</p>
+<p>For the explanaition of the code, please take a look at the youtube video.</p>
 <a class="reference internal image-reference" href="_images/semi-LA1D_Julia.png"><img alt="alternate text" class="align-center" src="_images/semi-LA1D_Julia.png" style="width: 500px; height: 400px;" /></a>
+</div>
+</div>
+<div class="section" id="lax-wendroff-method">
+<h3>Lax-Wendroff Method<a class="headerlink" href="#lax-wendroff-method" title="Permalink to this headline">¶</a></h3>
+<p>Lax-Wendroff method belongs to the class of conservative schemes. As we can see later, this method provide a second order (in time and space) numerical solution.
+There are many ways to derive this method. We use one of these methods. Our main aim is to find the numerical solution at <span class="math notranslate nohighlight">\(t=t_n+1\)</span> knowing solution at <span class="math notranslate nohighlight">\(t=t_n\)</span>.
+For this reason we write the taylor expansion of <span class="math notranslate nohighlight">\(u(x,t+\Delta t)\)</span> with respect to time, namely:</p>
+<div class="math notranslate nohighlight" id="equation-taylor-lax">
+<span class="eqno">(40)<a class="headerlink" href="#equation-taylor-lax" title="Permalink to this equation">¶</a></span>\[u(x,t+\Delta t) = u(x,t) + \Delta t u_{t}(x,t) + \frac{\Delta^2 t}{2} u_{tt}(x,t) + O(\Delta^3 t)\]</div>
+<p>But from equation <a class="reference internal" href="#equation-adv-1d">(1)</a> we know that <span class="math notranslate nohighlight">\(\partial_{t}=-c\partial_{x}\)</span>, thus we can substitude this expression in equation <a class="reference internal" href="#equation-taylor-lax">(40)</a> and we get:</p>
+<div class="math notranslate nohighlight" id="equation-taylor-lax1">
+<span class="eqno">(41)<a class="headerlink" href="#equation-taylor-lax1" title="Permalink to this equation">¶</a></span>\[u(x,t+\Delta t) = u(x,t) -a \Delta t u_{x}(x,t) +a^2 \frac{\Delta^2 t}{2} u_{xx}(x,t) + O(\Delta^3 t)\]</div>
+<p>Now we can spatially approximate equation <a class="reference internal" href="#equation-taylor-lax1">(41)</a> using central difference scheme for <span class="math notranslate nohighlight">\(u_{x}(x,t)\)</span> and <span class="math notranslate nohighlight">\(u_{xx}(x,t)\)</span> which results in:</p>
+<div class="math notranslate nohighlight" id="equation-lax-w">
+<span class="eqno">(42)<a class="headerlink" href="#equation-lax-w" title="Permalink to this equation">¶</a></span>\[u_{i}^{n+1} = a_{-1} u_{i-1}^{n} + a_{0} u_{i}^{n} +a_{1}  u_{i+1}^{n}\]</div>
+<p>where <span class="math notranslate nohighlight">\(a_{-1}=\frac{1}{2}C(1+C)\)</span>, <span class="math notranslate nohighlight">\(a_{0}=1-C^2\)</span>, <span class="math notranslate nohighlight">\(a_{1}=\frac{-1}{2}C(1-C)\)</span> and <span class="math notranslate nohighlight">\(C=\frac{c \Delta t}{\Delta x}\)</span>.</p>
+<p>Similar to upwind method, we can rewrite equation <a class="reference internal" href="#equation-lax-w">(42)</a> in its matrix form</p>
+<div class="math notranslate nohighlight" id="equation-matrixa-lax">
+<span class="eqno">(43)<a class="headerlink" href="#equation-matrixa-lax" title="Permalink to this equation">¶</a></span>\[\begin{split} \small\mathbf{A}=\small\begin{bmatrix}
+ a_{0} &amp; a_{1} &amp; 0 &amp; 0 &amp; 0&amp; ... &amp; a_{-1} \\
+ a_{-1} &amp; a_{0} &amp; a_{1}&amp; 0 &amp; 0 &amp;... &amp; 0 \\
+ 0 &amp; a_{-1} &amp; a_{0} &amp; a_{1}&amp; 0 &amp;... &amp; 0 \\
+  \vdots &amp; \vdots &amp; \ddots &amp; \ddots &amp;  \ddots &amp; \vdots &amp; \vdots \\
+ 0 &amp;0 &amp;... &amp; a_{-1} &amp; a_{0} &amp; a_{1} &amp; 0 \\
+ 0 &amp;0 &amp;... &amp; 0 &amp; a_{-1} &amp; a_{0} &amp; a_{1}  \\
+ a_{1}  &amp;0 &amp;... &amp; 0 &amp; 0&amp;  a_{-1} &amp; a_{0}  \\
+ \end{bmatrix}_{N\times N }\end{split}\]</div>
+<div class="section" id="id2">
+<h4>Stability And Accuracy<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<p>Using the same idea from FTCS section, we calculate the <span class="math notranslate nohighlight">\(A\)</span> for Lax-Wendroff method:</p>
+<div class="math notranslate nohighlight" id="equation-lax-au">
+<span class="eqno">(44)<a class="headerlink" href="#equation-lax-au" title="Permalink to this equation">¶</a></span>\[A = a_{0}+ a_{-1} e^{-ik \Delta x}+ a_{1} e^{ik \Delta x}\]</div>
+<p>Now calculating its norm, one can show that we have:</p>
+<div class="math notranslate nohighlight" id="equation-lax-a2">
+<span class="eqno">(45)<a class="headerlink" href="#equation-lax-a2" title="Permalink to this equation">¶</a></span>\[|A|^2 = 1 - 4 C^2 (1-C^2)sin^2(\frac{\chi}{2})\]</div>
+<p>Where <span class="math notranslate nohighlight">\(\chi=k \Delta x\)</span>. The method is stable if <span class="math notranslate nohighlight">\(|A| \leq 1\)</span> which leads to</p>
+<div class="math notranslate nohighlight" id="equation-cfl-cond-lax">
+<span class="eqno">(46)<a class="headerlink" href="#equation-cfl-cond-lax" title="Permalink to this equation">¶</a></span>\[|\frac{c \Delta t}{\Delta x}| \leq 1\]</div>
+<p>Thus this method is conditionally stable.</p>
+</div>
+<div class="section" id="python-code-using-matrix-form">
+<h4>Python Code (Using Matrix form)<a class="headerlink" href="#python-code-using-matrix-form" title="Permalink to this headline">¶</a></h4>
+<p>For the code, we just need to modify the ::UpwindMatrixAssembly:: the 1DLinearAdvection class and also in the main code in the upwind Python code.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>  
+<span class="k">def</span> <span class="nf">LaxWendroffMatrixAssembly</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+   <span class="n">C</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CFL</span><span class="p">();</span>
+   <span class="n">aleft</span><span class="o">=</span><span class="n">C</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">C</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="p">;</span>
+   <span class="n">amid</span><span class="o">=</span><span class="mf">1.</span><span class="o">-</span><span class="p">(</span><span class="n">C</span><span class="o">*</span><span class="n">C</span><span class="p">);</span>
+   <span class="n">aright</span><span class="o">=</span><span class="n">C</span><span class="o">*</span><span class="p">(</span><span class="n">C</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="p">;</span>
+   <span class="n">a1</span><span class="o">=</span><span class="p">[</span><span class="n">aleft</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+   <span class="n">a2</span><span class="o">=</span><span class="p">[</span><span class="n">amid</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+   <span class="n">a3</span><span class="o">=</span><span class="p">[</span><span class="n">aright</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">a3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">aleft</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">aright</span>  
+       
+  
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># calculating solution if CFL&lt;=1</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">LA1D</span><span class="o">.</span><span class="n">checkCFL</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;CFL number is: &quot;</span><span class="p">,</span> <span class="n">LA1D</span><span class="o">.</span><span class="n">CFL</span><span class="p">())</span>
+    <span class="n">LA1D</span><span class="o">.</span><span class="n">LaxWendroffMatrixAssembly</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">LA1D</span><span class="o">.</span><span class="n">T</span><span class="o">/</span><span class="n">LA1D</span><span class="o">.</span><span class="n">deltaT</span><span class="p">)):</span>
+        <span class="n">u</span><span class="o">=</span><span class="n">LA1D</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="n">u0</span><span class="p">)</span>
+        <span class="n">u0</span><span class="o">=</span><span class="n">u</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;CFL number is greater than 1. CFL: &quot;</span><span class="p">,</span> <span class="n">LA1D</span><span class="o">.</span><span class="n">CFL</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>For the explanaition of the code, please take a look at the youtube video.</p>
+<a class="reference internal image-reference" href="_images/LA1D_laxWendroff_Python.png"><img alt="alternate text" class="align-center" src="_images/LA1D_laxWendroff_Python.png" style="width: 500px; height: 400px;" /></a>
+</div>
+<div class="section" id="matlab-code-using-matrix-form">
+<h4>Matlab Code (Using Matrix form)<a class="headerlink" href="#matlab-code-using-matrix-form" title="Permalink to this headline">¶</a></h4>
+<p>For the code, we just need to modify the ::UpwindMatrixAssembly:: the 1DLinearAdvection class and also in the main code in the upwind Matlab code.</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span><span class="nf">LaxWendroffMatrixAssembly</span><span class="p">(</span>self<span class="p">)</span><span class="w"></span>
+<span class="w">   </span><span class="n">C</span><span class="p">=</span><span class="n">self</span><span class="p">.</span><span class="n">CFL</span><span class="p">();</span>
+   <span class="n">aleft</span><span class="p">=</span><span class="n">C</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">C</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="p">;</span>
+   <span class="n">amid</span><span class="p">=</span><span class="mf">1.</span><span class="o">-</span><span class="p">(</span><span class="n">C</span><span class="o">*</span><span class="n">C</span><span class="p">);</span>
+   <span class="n">aright</span><span class="p">=</span><span class="n">C</span><span class="o">*</span><span class="p">(</span><span class="n">C</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="p">;</span>
+   <span class="n">a1</span><span class="p">=</span><span class="n">aleft</span><span class="o">*</span><span class="nb">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">self</span><span class="p">.</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+   <span class="n">a2</span><span class="p">=</span><span class="n">amid</span><span class="o">*</span><span class="nb">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">self</span><span class="p">.</span><span class="n">N</span><span class="p">);</span>
+   <span class="n">a3</span><span class="p">=</span><span class="n">aright</span><span class="o">*</span><span class="nb">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">self</span><span class="p">.</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+   <span class="n">self</span><span class="p">.</span><span class="n">A</span><span class="p">=</span><span class="nb">diag</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="nb">diag</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="nb">diag</span><span class="p">(</span><span class="n">a3</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+   <span class="n">self</span><span class="p">.</span><span class="n">A</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="k">end</span><span class="p">)=</span><span class="n">aleft</span><span class="p">;</span>
+   <span class="n">self</span><span class="p">.</span><span class="n">A</span><span class="p">(</span><span class="k">end</span><span class="p">,</span><span class="mi">1</span><span class="p">)=</span><span class="n">aright</span><span class="p">;</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span> 
+<span class="c">% calculating solution if CFL&lt;=1</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">LA1D</span><span class="p">.</span><span class="n">checkCFL</span><span class="p">()</span><span class="o">==</span> <span class="n">true</span><span class="p">)</span>
+    <span class="nb">disp</span><span class="p">(</span><span class="n">strcat</span><span class="p">(</span>&quot;<span class="n">CFL</span> <span class="n">number</span> <span class="n">is</span><span class="p">:</span> &quot;<span class="p">,</span><span class="n">num2str</span><span class="p">(</span><span class="n">LA1D</span><span class="p">.</span><span class="n">CFL</span><span class="p">())))</span>
+    <span class="n">LA1D</span><span class="p">.</span><span class="n">LaxWendroffMatrixAssembly</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">t</span><span class="p">=</span><span class="mi">0</span><span class="p">:</span><span class="n">uint8</span><span class="p">(</span><span class="n">LA1D</span><span class="p">.</span><span class="n">T</span><span class="o">/</span><span class="n">LA1D</span><span class="p">.</span><span class="n">deltaT</span><span class="p">)</span>
+        <span class="n">u</span><span class="p">=</span><span class="n">LA1D</span><span class="p">.</span><span class="n">Solve</span><span class="p">(</span><span class="n">u0</span><span class="p">);</span>
+        <span class="n">u0</span><span class="p">=</span><span class="n">u</span><span class="p">;</span>
+    <span class="k">end</span>
+<span class="k">else</span>
+    <span class="nb">disp</span><span class="p">(</span><span class="n">strcat</span><span class="p">(</span>&quot;<span class="n">CFL</span> <span class="n">number</span> <span class="n">is</span> <span class="n">greater</span> <span class="n">than</span> <span class="mf">1.</span> <span class="n">CFL</span><span class="p">:</span> &quot;<span class="p">,</span><span class="n">num2str</span><span class="p">(</span><span class="n">LA1D</span><span class="p">.</span><span class="n">CFL</span><span class="p">())))</span>
+<span class="k">end</span>
+
+ 
+</pre></div>
+</div>
+<p>For the explanaition of the code, please take a look at the youtube video.</p>
+<a class="reference internal image-reference" href="_images/LA1D_laxWendroff_Matlab.png"><img alt="alternate text" class="align-center" src="_images/LA1D_laxWendroff_Matlab.png" style="width: 500px; height: 400px;" /></a>
+</div>
+<div class="section" id="julia-code-using-matrix-form">
+<h4>Julia Code (Using Matrix form)<a class="headerlink" href="#julia-code-using-matrix-form" title="Permalink to this headline">¶</a></h4>
+<p>For the code, we just need to modify the ::UpwindMatrixAssembly:: the 1DLinearAdvection type and also in the main code in the upwind Julia code.</p>
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">self</span><span class="o">.</span><span class="n">LaxWendroffMatrixAssembly</span> <span class="o">=</span> <span class="k">function</span><span class="p">()</span> 
+	<span class="n">C</span><span class="o">=</span><span class="n">self</span><span class="o">.</span><span class="n">CFL</span><span class="p">();</span>
+	<span class="n">aleft</span><span class="o">=</span><span class="n">C</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">C</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="p">;</span>
+	<span class="n">amid</span><span class="o">=</span><span class="mf">1.</span><span class="o">-</span><span class="p">(</span><span class="n">C</span><span class="o">*</span><span class="n">C</span><span class="p">);</span>
+	<span class="n">aright</span><span class="o">=</span><span class="n">C</span><span class="o">*</span><span class="p">(</span><span class="n">C</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="p">;</span> 
+	<span class="n">a1</span><span class="o">=</span><span class="p">[</span><span class="n">aleft</span> <span class="k">for</span> <span class="n">n</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">self</span><span class="o">.</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+	<span class="n">a2</span><span class="o">=</span><span class="p">[</span><span class="n">amid</span> <span class="k">for</span> <span class="n">n</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">self</span><span class="o">.</span><span class="n">N</span><span class="p">]</span>
+	<span class="n">a3</span><span class="o">=</span><span class="p">[</span><span class="n">aright</span> <span class="k">for</span> <span class="n">n</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">self</span><span class="o">.</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+	<span class="n">A</span><span class="o">=</span><span class="kt">Tridiagonal</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">a2</span><span class="p">,</span><span class="n">a3</span><span class="p">)</span><span class="o">+</span><span class="n">zeros</span><span class="p">(</span><span class="n">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span><span class="n">self</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+	<span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="k">end</span><span class="p">]</span><span class="o">=</span><span class="n">aleft</span>
+	<span class="n">A</span><span class="p">[</span><span class="k">end</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">aright</span>
+	<span class="k">return</span> <span class="n">A</span>
+<span class="k">end</span>
+
+<span class="n">self</span><span class="o">.</span><span class="n">Solve</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="n">u0</span><span class="o">::</span><span class="kt">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span><span class="mi">1</span><span class="p">})</span>
+	 <span class="k">return</span> <span class="n">self</span><span class="o">.</span><span class="n">LaxWendroffMatrixAssembly</span><span class="p">()</span><span class="o">*</span><span class="n">u0</span>
+<span class="k">end</span>        
+</pre></div>
+</div>
+<p>For the explanaition of the code, please take a look at the youtube video.</p>
+<a class="reference internal image-reference" href="_images/LA1D_laxWendroff_Julia.png"><img alt="alternate text" class="align-center" src="_images/LA1D_laxWendroff_Julia.png" style="width: 500px; height: 400px;" /></a>
 </div>
 </div>
 </div>

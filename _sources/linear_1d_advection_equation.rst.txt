@@ -91,7 +91,7 @@ In order that our numerical method to be stable, :math:`|A|` should be less than
 .. math:: |A|^2 = 1 + ( \frac{ \Delta t}{ \Delta x} sin(k \Delta x) )^2 
    :label: FTCS_A2  
 
-The above equation can never be able to be less than 1. Practically this method is not usefull since using von Neumann Stability Analysis, 
+The above equation can never be able to be less that or equal to 1. Practically this method is not usefull since using von Neumann Stability Analysis, 
 FTCS method is unconditionally unstable.
 
 
@@ -130,7 +130,7 @@ matrix  :math:`\mathbf{A}` for equation :eq:`adv_1d_upwind` is:
     0 &0 &... & \alpha_{max} & (1+\alpha_{min}-\alpha_{max}) &  -\alpha_{min} & 0 \\
     0 &0 &... & 0 & \alpha_{max} & (1+\alpha_{min}-\alpha_{max}) &  -\alpha_{min}  \\
     -\alpha_{min} &0 &... & 0 & 0&  \alpha_{max} & (1+\alpha_{min}-\alpha_{max})  \\
-    \end{bmatrix}_{(N+1)\times(N+1)}
+    \end{bmatrix}_{N\times N }
 
 As we mentioned above, if (:math:`c > 0`) we refer the discretization methods above as upwind and  if (:math:`c < 0`) as downwind.
 	
@@ -155,7 +155,7 @@ If this method is stable, then :math:`|A| \leq 1`. Then we have,
  
 which leads to 
 
-.. math:: C= \frac{c \Delta t}{\Delta x} \le 1
+.. math:: C= \frac{c \Delta t}{\Delta x} \leq 1
    :label: cfl_cond
   
  
@@ -187,7 +187,7 @@ Here is a python code for modeling the 1D linear advection equation using upwind
    :align: center	
 
 
-For the explanaition of the code, please take a look at the youtube vidoes.
+For the explanaition of the code, please take a look at the youtube video.
 
 
 Matlab Code (Matrix form)
@@ -195,16 +195,16 @@ Matlab Code (Matrix form)
 Here is a Matlab code for modeling the 1D linear advection equation using upwind method described above. First we define a class called LinearAdvection1D:
 
 
-.. literalinclude:: matlab_codes/LinearAdvection1D.m
+.. literalinclude:: matlab_codes/LinearAdvection1D_upwind.m
    :language: matlab
 
 
 For the main code we use LinearAdvection1D class in the folloing m file.    
 
-.. literalinclude:: matlab_codes/LA1D_m.m
+.. literalinclude:: matlab_codes/LA1D_upwind.m
    :language: matlab
 
-For the explanaition of the code, please take a look at the youtube vidoes.
+For the explanaition of the code, please take a look at the youtube video.
 
 .. image:: images/LA1D_Matlab.png
    :width: 500px
@@ -217,10 +217,10 @@ Julia Code (Matrix form)
 ^^^^^^^^^^^^^^^^^^^^^^^^^ 
 Here is a Julia code for modeling the 1D linear advection equation using upwind method described above. 
 
-.. literalinclude:: julia_codes/LinearAdvection1D.jl
+.. literalinclude:: julia_codes/LinearAdvection1D-upwind.jl
    :language: julia
 
-For the explanaition of the code, please take a look at the youtube vidoes.
+For the explanaition of the code, please take a look at the youtube video.
 
 .. image:: images/LA1D_Julia.png
    :width: 500px
@@ -381,7 +381,7 @@ Here is a python code for modeling the 1D linear advection equation using MOL.
 .. literalinclude:: python_codes/Semi_LA1D_Python.py
    :language: python
 
-For the explanaition of the code, please take a look at the youtube vidoes.
+For the explanaition of the code, please take a look at the youtube video.
 
 .. image:: images/semi-LA1D_Python.png
    :width: 500px
@@ -397,7 +397,7 @@ Here is a Matlab code for modeling the 1D linear advection equation using MOL.
 .. literalinclude:: matlab_codes/Semi_LA1D_Matlab.m
    :language: matlab
 
-For the explanaition of the code, please take a look at the youtube vidoes.
+For the explanaition of the code, please take a look at the youtube video.
 
 .. image:: images/semi-LA1D_Matlab.png
    :width: 500px
@@ -412,7 +412,7 @@ Here is a Julia code for modeling the 1D linear advection equation using MOL.
 .. literalinclude:: Julia_codes/Semi_LA1D_Julia.jl
    :language: julia
 
-For the explanaition of the code, please take a look at the youtube vidoes.
+For the explanaition of the code, please take a look at the youtube video.
 
 .. image:: images/semi-LA1D_Julia.png
    :width: 500px
@@ -422,7 +422,119 @@ For the explanaition of the code, please take a look at the youtube vidoes.
    
  
 
+Lax-Wendroff Method
+-----------------------
+
+Lax-Wendroff method belongs to the class of conservative schemes. As we can see later, this method provide a second order (in time and space) numerical solution.
+There are many ways to derive this method. We use one of these methods. Our main aim is to find the numerical solution at :math:`t=t_n+1` knowing solution at :math:`t=t_n`.
+For this reason we write the taylor expansion of :math:`u(x,t+\Delta t)` with respect to time, namely:
 
 
+.. math::  u(x,t+\Delta t) = u(x,t) + \Delta t u_{t}(x,t) + \frac{\Delta^2 t}{2} u_{tt}(x,t) + O(\Delta^3 t)
+   :label: taylor-lax
+
+But from equation :eq:`adv_1d` we know that :math:`\partial_{t}=-c\partial_{x}`, thus we can substitude this expression in equation :eq:`taylor-lax` and we get:
+
+.. math::  u(x,t+\Delta t) = u(x,t) -a \Delta t u_{x}(x,t) +a^2 \frac{\Delta^2 t}{2} u_{xx}(x,t) + O(\Delta^3 t)
+   :label: taylor-lax1
+
+Now we can spatially approximate equation :eq:`taylor-lax1` using central difference scheme for :math:`u_{x}(x,t)` and :math:`u_{xx}(x,t)` which results in:
+
+.. math::  u_{i}^{n+1} = a_{-1} u_{i-1}^{n} + a_{0} u_{i}^{n} +a_{1}  u_{i+1}^{n}
+   :label: lax-w
+
+where :math:`a_{-1}=\frac{1}{2}C(1+C)`, :math:`a_{0}=1-C^2`, :math:`a_{1}=\frac{-1}{2}C(1-C)` and :math:`C=\frac{c \Delta t}{\Delta x}`.
+   
+Similar to upwind method, we can rewrite equation :eq:`lax-w` in its matrix form
+
+.. math::
+   :label: matrixA-lax
+   
+    \small\mathbf{A}=\small\begin{bmatrix}
+    a_{0} & a_{1} & 0 & 0 & 0& ... & a_{-1} \\
+    a_{-1} & a_{0} & a_{1}& 0 & 0 &... & 0 \\
+    0 & a_{-1} & a_{0} & a_{1}& 0 &... & 0 \\
+     \vdots & \vdots & \ddots & \ddots &  \ddots & \vdots & \vdots \\
+    0 &0 &... & a_{-1} & a_{0} & a_{1} & 0 \\
+    0 &0 &... & 0 & a_{-1} & a_{0} & a_{1}  \\
+    a_{1}  &0 &... & 0 & 0&  a_{-1} & a_{0}  \\
+    \end{bmatrix}_{N\times N }
+
+Stability And Accuracy
+^^^^^^^^^^^^^^^^^^^^^^   
+
+Using the same idea from FTCS section, we calculate the :math:`A` for Lax-Wendroff method:
+
+.. math:: A = a_{0}+ a_{-1} e^{-ik \Delta x}+ a_{1} e^{ik \Delta x} 
+   :label: Lax_AU  
+   
+Now calculating its norm, one can show that we have:
+
+.. math:: |A|^2 = 1 - 4 C^2 (1-C^2)sin^2(\frac{\chi}{2})
+   :label: Lax_A2 
 
 
+Where :math:`\chi=k \Delta x`. The method is stable if :math:`|A| \leq 1` which leads to 
+
+.. math:: |\frac{c \Delta t}{\Delta x}| \leq 1
+   :label: cfl_cond-lax
+  
+Thus this method is conditionally stable.
+  
+  
+Python Code (Using Matrix form)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+For the code, we just need to modify the ::UpwindMatrixAssembly:: the 1DLinearAdvection class and also in the main code in the upwind Python code.
+
+.. literalinclude:: python_codes/LA1D_LaxWendroff-Matrix.py
+   :language: python
+   
+   
+.. literalinclude:: python_codes/LA1D_LaxWendroff-Solve.py
+   :language: python
+
+For the explanaition of the code, please take a look at the youtube video.
+
+.. image:: images/LA1D_laxWendroff_Python.png
+   :width: 500px
+   :height: 400px
+   :alt: alternate text
+   :align: center	
+
+
+Matlab Code (Using Matrix form)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+For the code, we just need to modify the ::UpwindMatrixAssembly:: the 1DLinearAdvection class and also in the main code in the upwind Matlab code.
+
+.. literalinclude:: matlab_codes/LA1D_LaxWendroff-Solve.m
+   :language: matlab
+
+.. literalinclude:: matlab_codes/LA1D_LaxWendroff-Matrix.m
+   :language: matlab
+   
+   
+For the explanaition of the code, please take a look at the youtube video.
+
+.. image:: images/LA1D_laxWendroff_Matlab.png
+   :width: 500px
+   :height: 400px
+   :alt: alternate text
+   :align: center	
+
+Julia Code (Using Matrix form)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+For the code, we just need to modify the ::UpwindMatrixAssembly:: the 1DLinearAdvection type and also in the main code in the upwind Julia code.
+
+.. literalinclude:: julia_codes/LA1D_LaxWendroff-Matrix.jl
+   :language: julia
+ 
+   
+For the explanaition of the code, please take a look at the youtube video.
+
+.. image:: images/LA1D_laxWendroff_Julia.png
+   :width: 500px
+   :height: 400px
+   :alt: alternate text
+   :align: center	
+   
+   
