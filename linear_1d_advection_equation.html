@@ -89,11 +89,15 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#upwind-and-downwind-methods">Upwind and Downwind Methods</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id1">Stability And Accuracy</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#python-code">Python Code</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#matlab-code">Matlab Code</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#julia-code">Julia Code</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#python-code-matrix-form">Python Code (Matrix form)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#matlab-code-matrix-form">Matlab Code (Matrix form)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#julia-code-matrix-form">Julia Code (Matrix form)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#modified-equation">Modified Equation</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#error-due-to-diffusion-and-dispersion">Error due to Diffusion and Dispersion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#method-of-lines">Method of lines</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#python-code-using-mol">Python Code (Using MOL)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#matlab-code-using-mol">Matlab Code (Using MOL)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#julia-code-using-mol">Julia Code (Using MOL)</a></li>
 </ul>
 </li>
 </ul>
@@ -194,10 +198,10 @@ descritized uniformly as:</p>
 <p>Let us assume that <span class="math notranslate nohighlight">\(u_{i}^{n}:=u(x_i,t_n)\)</span>. Then using applying central spatial difference and the temporal forward Euler methods to
 equation <a class="reference internal" href="#equation-adv-1d">(1)</a>, we have:</p>
 <div class="math notranslate nohighlight" id="equation-adv-1d-dis1">
-<span class="eqno">(4)<a class="headerlink" href="#equation-adv-1d-dis1" title="Permalink to this equation">¶</a></span>\[\frac{u_{i}^{n+1}-u_{i}^{n}}{\Delta t} + \frac{u_{i-1}^{n}-u_{i+1}^{n}}{2 \Delta x}  = 0\]</div>
+<span class="eqno">(4)<a class="headerlink" href="#equation-adv-1d-dis1" title="Permalink to this equation">¶</a></span>\[\frac{u_{i}^{n+1}-u_{i}^{n}}{\Delta t} + c \frac{u_{i-1}^{n}-u_{i+1}^{n}}{2 \Delta x}  = 0\]</div>
 <p>If we rearrange equation <a class="reference internal" href="#equation-adv-1d-dis1">(4)</a> we finally have:</p>
 <div class="math notranslate nohighlight" id="equation-adv-1d-dis">
-<span class="eqno">(5)<a class="headerlink" href="#equation-adv-1d-dis" title="Permalink to this equation">¶</a></span>\[u_{i}^{n+1}=u_{i}^{n}+ \frac{ \Delta t}{2 \Delta x} \Big(u_{i-1}^{n}-u_{i+1}^{n}\Big)\]</div>
+<span class="eqno">(5)<a class="headerlink" href="#equation-adv-1d-dis" title="Permalink to this equation">¶</a></span>\[u_{i}^{n+1}=u_{i}^{n}+ c \frac{ \Delta t}{2 \Delta x} \Big(u_{i-1}^{n}-u_{i+1}^{n}\Big)\]</div>
 <div class="section" id="stability-and-accuracy">
 <h4>Stability And Accuracy<a class="headerlink" href="#stability-and-accuracy" title="Permalink to this headline">¶</a></h4>
 <p>Let assume that solution of equation <a class="reference internal" href="#equation-adv-1d">(1)</a> is periodic in the defined domain. Lets consider <span class="math notranslate nohighlight">\(\psi(x,t)\)</span> is the solution of
@@ -274,8 +278,8 @@ matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equ
 <div class="math notranslate nohighlight" id="equation-cfl-cond-dw">
 <span class="eqno">(21)<a class="headerlink" href="#equation-cfl-cond-dw" title="Permalink to this equation">¶</a></span>\[C= \frac{c \Delta t}{\Delta x} \geq -1\]</div>
 </div>
-<div class="section" id="python-code">
-<h4>Python Code<a class="headerlink" href="#python-code" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="python-code-matrix-form">
+<h4>Python Code (Matrix form)<a class="headerlink" href="#python-code-matrix-form" title="Permalink to this headline">¶</a></h4>
 <p>Here is a python code for modeling the 1D linear advection equation using upwind method described above.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>    
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
@@ -361,8 +365,8 @@ matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equ
 <a class="reference internal image-reference" href="_images/LA1D_Python.png"><img alt="alternate text" class="align-center" src="_images/LA1D_Python.png" style="width: 500px; height: 400px;" /></a>
 <p>For the explanaition of the code, please take a look at the youtube vidoes.</p>
 </div>
-<div class="section" id="matlab-code">
-<h4>Matlab Code<a class="headerlink" href="#matlab-code" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="matlab-code-matrix-form">
+<h4>Matlab Code (Matrix form)<a class="headerlink" href="#matlab-code-matrix-form" title="Permalink to this headline">¶</a></h4>
 <p>Here is a Matlab code for modeling the 1D linear advection equation using upwind method described above. First we define a class called LinearAdvection1D:</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="k">classdef</span> <span class="n">LinearAdvection1D</span> <span class="o">&lt;</span> <span class="n">handle</span>    
     <span class="k">properties</span>
@@ -450,8 +454,8 @@ matrix  <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> for equ
 <p>For the explanaition of the code, please take a look at the youtube vidoes.</p>
 <a class="reference internal image-reference" href="_images/LA1D_Matlab.png"><img alt="alternate text" class="align-center" src="_images/LA1D_Matlab.png" style="width: 500px; height: 400px;" /></a>
 </div>
-<div class="section" id="julia-code">
-<h4>Julia Code<a class="headerlink" href="#julia-code" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="julia-code-matrix-form">
+<h4>Julia Code (Matrix form)<a class="headerlink" href="#julia-code-matrix-form" title="Permalink to this headline">¶</a></h4>
 <p>Here is a Julia code for modeling the 1D linear advection equation using upwind method described above.</p>
 <div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">PyPlot</span>
 <span class="k">type</span> <span class="n">LinearAdvection1d</span>
@@ -609,6 +613,172 @@ and using equation <a class="reference internal" href="#equation-upwind-aup">(16
 <p>In the figure above we can see for different values of <span class="math notranslate nohighlight">\(C\)</span>, how <span class="math notranslate nohighlight">\(\epsilon_\phi\)</span> changed as the frequency increases. As can be seen, there is no dispersion error for <span class="math notranslate nohighlight">\(C=1\)</span>
 and <span class="math notranslate nohighlight">\(C=0.5\)</span>. for the values of <span class="math notranslate nohighlight">\(C&lt;0.5\)</span>, <span class="math notranslate nohighlight">\(\epsilon_\phi&lt;1\)</span> meaning that the numerical solution moves slower than the physical one. On the other hand for <span class="math notranslate nohighlight">\(C&gt;0.5\)</span>, this
 is vice versa.</p>
+</div>
+<div class="section" id="method-of-lines">
+<h4>Method of lines<a class="headerlink" href="#method-of-lines" title="Permalink to this headline">¶</a></h4>
+<p>The numerical method of lines (MOL) is a technique for solving PDEs. In this method we discretize all but one dimension (for example temporal terms) and
+then integrate the semi-discrete problem as a system of ODEs or DAEs. For using this method, the PDE problem should be well posed as an initial value
+problem in at least one dimension, since the ODE and DAE integrators used are initial value in problem solvers. For this reason MOL cannot be used directly on purely elliptic
+partial differential equations, such as Laplace’s equation. However for solving Laplace’s equation using MOL, “method of false transients” can be applied or “semi-analytical method of lines” can
+be used.</p>
+<p>For simplicity, let us assume equation <a class="reference internal" href="#equation-adv-1d">(1)</a> with <span class="math notranslate nohighlight">\(c&gt;0\)</span>. Then the semi discretization of this equation using backward spatial descritization is:</p>
+<div class="math notranslate nohighlight" id="equation-semi-d">
+<span class="eqno">(39)<a class="headerlink" href="#equation-semi-d" title="Permalink to this equation">¶</a></span>\[u_t =- c \frac{u_{i}^{n}-u_{i-1}^{n}}{ \Delta x}\]</div>
+<p>We have wide range of ODE solvers in Matlab, Julia and python, which we use some of them here.</p>
+</div>
+<div class="section" id="python-code-using-mol">
+<h4>Python Code (Using MOL)<a class="headerlink" href="#python-code-using-mol" title="Permalink to this headline">¶</a></h4>
+<p>Here is a python code for modeling the 1D linear advection equation using MOL.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">odeint</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="c1"># function specifing the rhs of MOL</span>
+<span class="k">def</span> <span class="nf">rhs</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">A</span><span class="p">):</span>
+    <span class="n">N</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span><span class="n">x0</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span><span class="n">xN</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span> <span class="n">c</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span> 
+    <span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span><span class="n">xN</span><span class="p">,</span><span class="n">N</span><span class="p">);</span>
+    <span class="n">dx</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="n">dudt</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>    
+    <span class="c1"># Periodic boundary condition </span>
+    <span class="n">dudt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=-</span><span class="n">c</span><span class="o">*</span><span class="p">(</span><span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">u</span><span class="p">[</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="n">dx</span><span class="p">;</span> 
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span> 
+        <span class="n">dudt</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=-</span> <span class="n">c</span><span class="o">*</span><span class="p">(</span><span class="n">u</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">-</span><span class="n">u</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="n">dx</span><span class="p">;</span>
+    
+    <span class="k">return</span> <span class="n">dudt</span>
+
+<span class="n">T</span><span class="o">=</span><span class="mf">0.5</span><span class="p">;</span>
+<span class="n">tspan</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">T</span><span class="p">,</span><span class="mi">10</span><span class="p">);</span>
+
+<span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">;</span><span class="n">x0</span><span class="o">=</span><span class="mf">0.</span><span class="p">;</span><span class="n">xN</span><span class="o">=</span><span class="mf">10.</span><span class="p">;</span><span class="n">c</span><span class="o">=</span><span class="mf">1.</span><span class="p">;</span>
+<span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span><span class="n">xN</span><span class="p">,</span><span class="n">N</span><span class="p">);</span>
+<span class="c1"># Parameters of ODE system </span>
+<span class="n">A</span><span class="o">=</span><span class="p">[</span><span class="n">N</span><span class="p">,</span> <span class="n">x0</span> <span class="p">,</span><span class="n">xN</span> <span class="p">,</span><span class="n">c</span><span class="p">];</span>
+
+<span class="c1"># Exact solution</span>
+<span class="n">uexc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">T</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">T</span><span class="o">-</span><span class="mi">2</span><span class="p">));</span>
+<span class="c1"># Initial value</span>
+<span class="n">u0</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">2</span><span class="p">));</span>
+<span class="c1"># Solving ODE</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">odeint</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">u0</span><span class="p">,</span> <span class="n">tspan</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">A</span><span class="p">,))</span>
+ 
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">u0</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Initial value&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="c1"># ploting the last solution</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">u</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Solution at t=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">T</span><span class="p">))</span>
+<span class="c1"># ploting the last solution</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">uexc</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Exact solution at t= &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">T</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;dotted&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;semi-LA1D_Python.png&#39;</span><span class="p">,</span><span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For the explanaition of the code, please take a look at the youtube vidoes.</p>
+<a class="reference internal image-reference" href="_images/semi-LA1D_Python.png"><img alt="alternate text" class="align-center" src="_images/semi-LA1D_Python.png" style="width: 500px; height: 400px;" /></a>
+</div>
+<div class="section" id="matlab-code-using-mol">
+<h4>Matlab Code (Using MOL)<a class="headerlink" href="#matlab-code-using-mol" title="Permalink to this headline">¶</a></h4>
+<p>Here is a Matlab code for modeling the 1D linear advection equation using MOL.</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="nf">Semi_LA1D_Matlab</span>
+<span class="n">clc</span>
+<span class="n">T</span><span class="p">=</span><span class="mf">0.5</span><span class="p">;</span>
+<span class="n">N</span><span class="p">=</span><span class="mi">100</span><span class="p">;</span><span class="n">x0</span><span class="p">=</span><span class="mf">0.</span><span class="p">;</span><span class="n">xN</span><span class="p">=</span><span class="mf">10.</span><span class="p">;</span><span class="n">c</span><span class="p">=</span><span class="mf">1.</span><span class="p">;</span>
+<span class="n">x</span><span class="p">=</span><span class="nb">linspace</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span><span class="n">xN</span><span class="p">,</span><span class="n">N</span><span class="p">);</span>
+
+<span class="c">% Parameters of ODE system </span>
+<span class="n">A</span><span class="p">=[</span><span class="n">N</span> <span class="n">x0</span> <span class="n">xN</span> <span class="n">c</span><span class="p">];</span>
+
+<span class="c">% Exact solution</span>
+<span class="n">uexc</span><span class="p">=</span><span class="nb">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">T</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">.*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">T</span><span class="o">-</span><span class="mi">2</span><span class="p">));</span>
+
+<span class="c">% Temporal solving range</span>
+<span class="n">tspan</span><span class="p">=[</span><span class="mi">0</span> <span class="n">T</span><span class="p">];</span>
+<span class="c">% Initial value</span>
+<span class="n">u0</span><span class="p">=</span><span class="nb">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">.*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">2</span><span class="p">));</span>
+<span class="c">% Solving ODE</span>
+<span class="p">[</span><span class="n">t</span><span class="p">,</span><span class="n">u</span><span class="p">]=</span><span class="n">ode45</span><span class="p">(@(</span><span class="n">t</span><span class="p">,</span><span class="n">u</span><span class="p">)</span> <span class="n">rhs</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">u</span><span class="p">,</span><span class="n">A</span><span class="p">),</span><span class="n">tspan</span><span class="p">,</span><span class="n">u0</span><span class="p">);</span>
+<span class="c">% Ploting initial value, exact sol. and numerical sol.</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">u0</span><span class="p">);</span>
+<span class="n">hold</span> <span class="n">on</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">(</span><span class="k">end</span><span class="p">,:));</span> 
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">uexc</span><span class="p">);</span> 
+<span class="n">axis</span><span class="p">([</span><span class="mi">0</span> <span class="mf">10.1</span>  <span class="mi">0</span> <span class="mf">1.1</span><span class="p">])</span> 
+<span class="n">xlabel</span><span class="p">(</span>&quot;<span class="n">x</span>&quot;<span class="p">)</span>
+<span class="n">ylabel</span><span class="p">(</span>&quot;<span class="n">u</span>&quot;<span class="p">)</span>
+<span class="n">grid</span> <span class="n">on</span>
+
+<span class="n">legend</span><span class="p">({</span>&quot;<span class="n">Initial</span> <span class="n">value</span>&quot;<span class="p">,</span><span class="n">strcat</span><span class="p">(</span>&quot;<span class="n">Solution</span> <span class="n">at</span> <span class="n">t</span><span class="p">=</span>&quot;<span class="p">,</span><span class="n">num2str</span><span class="p">(</span><span class="n">T</span><span class="p">)),</span><span class="n">strcat</span><span class="p">(</span>&quot;<span class="n">Exact</span> <span class="n">Solution</span> <span class="n">at</span> <span class="n">t</span><span class="p">=</span>&quot;<span class="p">,</span><span class="n">num2str</span><span class="p">(</span><span class="n">T</span><span class="p">))},</span><span class="s">&#39;Location&#39;</span><span class="p">,</span><span class="s">&#39;east&#39;</span><span class="p">)</span>
+     
+<span class="c">% function specifing the rhs of MOL</span>
+<span class="k">    function</span><span class="w"> </span>dudt<span class="p">=</span><span class="nf">rhs</span><span class="p">(</span>t,u,A<span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="n">N</span><span class="p">=</span><span class="n">A</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="n">x0</span><span class="p">=</span><span class="n">A</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span><span class="n">xN</span><span class="p">=</span><span class="n">A</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span> <span class="n">c</span><span class="p">=</span><span class="n">A</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span> 
+        <span class="n">x</span><span class="p">=</span><span class="nb">linspace</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span><span class="n">xN</span><span class="p">,</span><span class="n">N</span><span class="p">);</span>
+        <span class="n">dx</span><span class="p">=</span><span class="n">x</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="n">x</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+        <span class="c">% Periodic boundary condition </span>
+        <span class="n">dudt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)=</span><span class="o">-</span><span class="n">c</span><span class="o">*</span><span class="p">(</span><span class="n">u</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="n">u</span><span class="p">(</span><span class="n">N</span><span class="p">))</span><span class="o">/</span><span class="n">dx</span><span class="p">;</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">=</span><span class="mi">2</span><span class="p">:</span><span class="n">N</span> 
+            <span class="n">dudt</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="p">=</span><span class="o">-</span> <span class="n">c</span><span class="o">*</span><span class="p">(</span><span class="n">u</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">-</span><span class="n">u</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="n">dx</span><span class="p">;</span>
+        <span class="k">end</span>
+ 
+    <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>For the explanaition of the code, please take a look at the youtube vidoes.</p>
+<a class="reference internal image-reference" href="_images/semi-LA1D_Matlab.png"><img alt="alternate text" class="align-center" src="_images/semi-LA1D_Matlab.png" style="width: 500px; height: 400px;" /></a>
+</div>
+<div class="section" id="julia-code-using-mol">
+<h4>Julia Code (Using MOL)<a class="headerlink" href="#julia-code-using-mol" title="Permalink to this headline">¶</a></h4>
+<p>Here is a Julia code for modeling the 1D linear advection equation using MOL.</p>
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">DifferentialEquations</span>
+<span class="k">using</span> <span class="n">PyPlot</span>
+
+<span class="c"># function specifing the rhs of MOL</span>
+<span class="k">function</span> <span class="n">rhs</span><span class="p">(</span><span class="n">dudt</span><span class="p">,</span><span class="n">u</span><span class="p">,</span><span class="n">A</span><span class="o">::</span><span class="kt">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span><span class="mi">1</span><span class="p">},</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">N</span><span class="o">=</span><span class="kt">Integer</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span><span class="n">x0</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="n">xN</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span> <span class="n">c</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span> 
+    <span class="n">x</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span><span class="n">xN</span><span class="p">,</span><span class="n">N</span><span class="p">);</span>
+    <span class="n">dx</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+    <span class="c"># Periodic boundary condition </span>
+    <span class="n">dudt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=-</span><span class="n">c</span><span class="o">*</span><span class="p">(</span><span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">u</span><span class="p">[</span><span class="n">N</span><span class="p">])</span><span class="o">/</span><span class="n">dx</span><span class="p">;</span> 
+    <span class="k">for</span> <span class="n">n</span> <span class="kp">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">dudt</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=-</span> <span class="n">c</span><span class="o">*</span><span class="p">(</span><span class="n">u</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">-</span><span class="n">u</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="n">dx</span><span class="p">;</span>
+    <span class="k">end</span>   
+<span class="k">end</span>
+
+<span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">;</span><span class="n">x0</span><span class="o">=</span><span class="mf">0.</span><span class="p">;</span><span class="n">xN</span><span class="o">=</span><span class="mf">10.</span><span class="p">;</span><span class="n">c</span><span class="o">=</span><span class="mf">1.</span><span class="p">;</span>
+<span class="n">T</span><span class="o">=</span><span class="mf">0.5</span><span class="p">;</span>
+
+<span class="c"># Parameters of ODE system </span>
+<span class="n">A</span><span class="o">=</span><span class="p">[</span><span class="n">N</span><span class="p">,</span> <span class="n">x0</span> <span class="p">,</span><span class="n">xN</span> <span class="p">,</span><span class="n">c</span><span class="p">];</span>
+
+<span class="n">x</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span><span class="n">xN</span><span class="p">,</span><span class="n">N</span><span class="p">);</span>
+
+<span class="c"># Exact solution</span>
+<span class="n">uexc</span><span class="o">=</span><span class="n">exp</span><span class="o">.</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">T</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">.*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">T</span><span class="o">-</span><span class="mi">2</span><span class="p">));</span>
+<span class="c"># Initial value</span>
+<span class="n">u0</span><span class="o">=</span><span class="n">exp</span><span class="o">.</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">.*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">2</span><span class="p">));</span>
+
+<span class="c"># Problem definition of ODE in Julia</span>
+<span class="n">tspan</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">prob</span> <span class="o">=</span> <span class="n">ODEProblem</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span><span class="n">u0</span><span class="p">,</span><span class="n">tspan</span><span class="p">,</span><span class="n">A</span><span class="p">)</span>
+
+<span class="c"># Solving ODE</span>
+<span class="n">sol</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span><span class="n">saveat</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="n">PyPlot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">u0</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Initial value&quot;</span><span class="p">)</span>     
+<span class="n">PyPlot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">sol</span><span class="p">[</span><span class="k">end</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="n">string</span><span class="p">(</span><span class="s">&quot;Solution at t= &quot;</span><span class="p">,</span><span class="n">T</span><span class="p">))</span>
+<span class="n">PyPlot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">uexc</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">string</span><span class="p">(</span><span class="s">&quot;Exact solution at t= &quot;</span><span class="p">,</span><span class="n">T</span><span class="p">))</span>
+<span class="n">PyPlot</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">PyPlot</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">linestyle</span><span class="o">=</span><span class="s">&quot;dotted&quot;</span><span class="p">)</span>
+<span class="n">PyPlot</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;x&quot;</span><span class="p">)</span>
+<span class="n">PyPlot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;u&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For the explanaition of the code, please take a look at the youtube vidoes.</p>
+<a class="reference internal image-reference" href="_images/semi-LA1D_Julia.png"><img alt="alternate text" class="align-center" src="_images/semi-LA1D_Julia.png" style="width: 500px; height: 400px;" /></a>
 </div>
 </div>
 </div>

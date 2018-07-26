@@ -44,12 +44,12 @@ descritized uniformly as:
 Let us assume that :math:`u_{i}^{n}:=u(x_i,t_n)`. Then using applying central spatial difference and the temporal forward Euler methods to
 equation :eq:`adv_1d`, we have:
 
-.. math:: \frac{u_{i}^{n+1}-u_{i}^{n}}{\Delta t} + \frac{u_{i-1}^{n}-u_{i+1}^{n}}{2 \Delta x}  = 0
+.. math:: \frac{u_{i}^{n+1}-u_{i}^{n}}{\Delta t} + c \frac{u_{i-1}^{n}-u_{i+1}^{n}}{2 \Delta x}  = 0
    :label: adv_1d_dis1
 
 If we rearrange equation :eq:`adv_1d_dis1` we finally have:
 
-.. math:: u_{i}^{n+1}=u_{i}^{n}+ \frac{ \Delta t}{2 \Delta x} \Big(u_{i-1}^{n}-u_{i+1}^{n}\Big)   
+.. math:: u_{i}^{n+1}=u_{i}^{n}+ c \frac{ \Delta t}{2 \Delta x} \Big(u_{i-1}^{n}-u_{i+1}^{n}\Big)   
    :label: adv_1d_dis
 
 Stability And Accuracy
@@ -171,8 +171,8 @@ and if the method is stable, then :math:`|A| \leq 1` leading to
   
 
  
-Python Code
-^^^^^^^^^^^  
+Python Code (Matrix form)
+^^^^^^^^^^^^^^^^^^^^^^^^^  
 
 Here is a python code for modeling the 1D linear advection equation using upwind method described above. 
 
@@ -190,8 +190,8 @@ Here is a python code for modeling the 1D linear advection equation using upwind
 For the explanaition of the code, please take a look at the youtube vidoes.
 
 
-Matlab Code
-^^^^^^^^^^^  
+Matlab Code (Matrix form)
+^^^^^^^^^^^^^^^^^^^^^^^^^ 
 Here is a Matlab code for modeling the 1D linear advection equation using upwind method described above. First we define a class called LinearAdvection1D:
 
 
@@ -213,8 +213,8 @@ For the explanaition of the code, please take a look at the youtube vidoes.
    :align: center	
 
 
-Julia Code
-^^^^^^^^^^^ 
+Julia Code (Matrix form)
+^^^^^^^^^^^^^^^^^^^^^^^^^ 
 Here is a Julia code for modeling the 1D linear advection equation using upwind method described above. 
 
 .. literalinclude:: julia_codes/LinearAdvection1D.jl
@@ -355,4 +355,74 @@ and using equation :eq:`Upwind_AUp`, we have
 In the figure above we can see for different values of :math:`C`, how :math:`\epsilon_\phi` changed as the frequency increases. As can be seen, there is no dispersion error for :math:`C=1`
 and :math:`C=0.5`. for the values of :math:`C<0.5`, :math:`\epsilon_\phi<1` meaning that the numerical solution moves slower than the physical one. On the other hand for :math:`C>0.5`, this
 is vice versa.
+
+
+Method of lines 
+^^^^^^^^^^^^^^^^
+
+The numerical method of lines (MOL) is a technique for solving PDEs. In this method we discretize all but one dimension (for example temporal terms) and 
+then integrate the semi-discrete problem as a system of ODEs or DAEs. For using this method, the PDE problem should be well posed as an initial value  
+problem in at least one dimension, since the ODE and DAE integrators used are initial value in problem solvers. For this reason MOL cannot be used directly on purely elliptic 
+partial differential equations, such as Laplace's equation. However for solving Laplace's equation using MOL, "method of false transients" can be applied or "semi-analytical method of lines" can 
+be used.
+
+For simplicity, let us assume equation :eq:`adv_1d` with :math:`c>0`. Then the semi discretization of this equation using backward spatial descritization is:
+
+
+.. math::  u_t =- c \frac{u_{i}^{n}-u_{i-1}^{n}}{ \Delta x} 
+   :label: semi-d
+
+We have wide range of ODE solvers in Matlab, Julia and python, which we use some of them here.
+
+Python Code (Using MOL)
+^^^^^^^^^^^^^^^^^^^^^^^^^ 
+Here is a python code for modeling the 1D linear advection equation using MOL. 
+
+.. literalinclude:: python_codes/Semi_LA1D_Python.py
+   :language: python
+
+For the explanaition of the code, please take a look at the youtube vidoes.
+
+.. image:: images/semi-LA1D_Python.png
+   :width: 500px
+   :height: 400px
+   :alt: alternate text
+   :align: center	
+
+
+Matlab Code (Using MOL)
+^^^^^^^^^^^^^^^^^^^^^^^^^   
+Here is a Matlab code for modeling the 1D linear advection equation using MOL.
+
+.. literalinclude:: matlab_codes/Semi_LA1D_Matlab.m
+   :language: matlab
+
+For the explanaition of the code, please take a look at the youtube vidoes.
+
+.. image:: images/semi-LA1D_Matlab.png
+   :width: 500px
+   :height: 400px
+   :alt: alternate text
+   :align: center	
+
+Julia Code (Using MOL)
+^^^^^^^^^^^^^^^^^^^^^^^^^   
+Here is a Julia code for modeling the 1D linear advection equation using MOL.
+
+.. literalinclude:: Julia_codes/Semi_LA1D_Julia.jl
+   :language: julia
+
+For the explanaition of the code, please take a look at the youtube vidoes.
+
+.. image:: images/semi-LA1D_Julia.png
+   :width: 500px
+   :height: 400px
+   :alt: alternate text
+   :align: center	
+   
+ 
+
+
+
+
 
